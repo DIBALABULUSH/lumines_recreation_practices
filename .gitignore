@@ -14,6 +14,7 @@
 /lumines_recreation/[Bb]uilds/
 /lumines_recreation/[Ll]ogs/
 /lumines_recreation/[Uu]ser[Ss]ettings/
+/lumines_recreation/[Ss]cene[Bb]ackups/
 *.log
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
