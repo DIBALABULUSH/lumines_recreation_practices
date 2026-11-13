@@ -9,22 +9,23 @@ namespace Lumines
     /// The 2x2 piece above is present as ABBA
     /// We can use the binary to store these.
     /// </summary>
-    public enum PieceType : byte
+    public enum EPieceType : byte
     {
-        AAAA = 0,
-        AAAB = 1,
-        AABA = 2,
-        AABB = 3,
-        ABAB = 4,
-        ABBA = 5,
-        ABBB = 6,
-        BAAA = 7,
-        BAAB = 8,
-        BABA = 9,
-        BABB = 10,
-        BBAA = 11,
-        BBAB = 12,
-        BBBA = 13,
-        BBBB = 14,
+        AAAA = 0b0000,
+        AAAB = 0b0001,
+        AABA = 0b0010,
+        AABB = 0b0011,
+        ABAA = 0b0100,
+        ABAB = 0b0101,
+        ABBA = 0b0110,
+        ABBB = 0b0111,
+        BAAA = 0b1000,
+        BAAB = 0b1001,
+        BABA = 0b1010,
+        BABB = 0b1011,
+        BBAA = 0b1100,
+        BBAB = 0b1101,
+        BBBA = 0b1110,
+        BBBB = 0b1111,
     }
 }
