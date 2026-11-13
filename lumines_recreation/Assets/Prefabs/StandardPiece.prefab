@@ -126,14 +126,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8465606015bd36d49b7d6e83b23b115c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockAPrefab: {fileID: 0}
-  blockBPrefab: {fileID: 0}
+  blockAPrefab: {fileID: 6347027712377954922, guid: 030c9f6f2f0e457488dbef30b6ad43fe,
+    type: 3}
+  blockBPrefab: {fileID: 1750632387286883558, guid: 983163426ea9893409d2bc51ca4336f2,
+    type: 3}
   rotateRoot: {fileID: 9025014480139488781}
   blockRootList:
   - {fileID: 6130492999118881369}
   - {fileID: 4270193758597253486}
   - {fileID: 4632174151323695288}
   - {fileID: 7625722576789324946}
+  rotateAnglePerStep: {x: 0, y: 0, z: 90}
+  rotateDuration: 0.2
+  rotateCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.70283
+      outSlope: 3.70283
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.08542043
+    - serializedVersion: 3
+      time: 0.3131756
+      value: 0.7114929
+      inSlope: 1.2920663
+      outSlope: 1.2920663
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.072626606
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &5717480544868180498
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "LuminesStandard",
+            "id": "74e3e469-d160-4bec-a42a-23324430dbd5",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "058832db-a5da-41b1-b554-2334b20e84ee",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0112b467-6f82-4cf0-9992-675a69101648",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

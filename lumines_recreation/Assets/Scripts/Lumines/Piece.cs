@@ -16,14 +16,20 @@ namespace Lumines
         
         private readonly Vector2 rotateCenter = new Vector2(0.5f, 0.5f);
         
-        //
+        // base data
         private byte _piece;
+        private int _rotateCount;
         
         // piece status, these status can exist all at once
         private bool _isRotating;
         private bool _isDropping;
         private bool _isMoving;
 
+        private float _lastRotateTime;
+
+        // TODO : temp
+        public float rotateDuration = 0.2f;
+        
         private void Awake()
         {
             visual = GetComponent<PieceVisual>();
@@ -31,26 +37,48 @@ namespace Lumines
 
         public void Init()
         {
-            GetRandomPiece();
-        }
-
-        private void GetRandomPiece()
-        {
             _piece = RandomByteLast4Bits(0);
             piece[0, 0] = (byte)(_piece & 1);
             piece[1, 0] = (byte)((_piece >> 1) & 1);
             piece[0, 1] = (byte)((_piece >> 2) & 1);
             piece[1, 1] = (byte)((_piece >> 3) & 1);
+            _rotateCount = 0;
         }
 
+        public void TryRotate(bool ccw)
+        {
+            if (_isRotating || Time.time - _lastRotateTime < rotateDuration)
+            {
+                return;
+            }
+            
+            _isRotating = true;
+            _lastRotateTime = Time.time;
+            
+            if (ccw)
+            {
+                CcwRotatePiece();
+            }
+            else
+            {
+                CwRotatePiece();
+            }
+        }
+        
         public void CwRotatePiece()
         {
+            _rotateCount--;
             RotatePiece(-90f);
+            
+            visual.RotateAnimation(_rotateCount, -1);
         }
 
         public void CcwRotatePiece()
         {
+            _rotateCount++;
             RotatePiece(90f);
+            
+            visual.RotateAnimation(_rotateCount);
         }
 
         public void RotatePiece(float angle)
