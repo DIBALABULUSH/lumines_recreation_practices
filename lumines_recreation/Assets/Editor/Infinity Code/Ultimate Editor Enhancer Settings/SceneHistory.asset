@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b1ad13bf0912354e82f29889c32b57b, type: 3}
+  m_Name: SceneHistory
+  m_EditorClassIdentifier: 
+  _items:
+  - name: SampleScene
+    path: Assets/Scenes/SampleScene.unity
+  - name: UI
+    path: Assets/TY_Test_Res/Scene/UI.unity
+  - name: SampleScene_Timeline
+    path: Assets/Scenes/SampleScene_Timeline.unity
+  - name: Game
+    path: Assets/Scenes/Game.unity
+  - name: UITestScene
+    path: Assets/Scenes/Tests/UITestScene.unity
+  - name: Bootstrap
+    path: Assets/Scenes/Bootstrap.unity
+  - name: CharacterViewer
+    path: Assets/Scenes/Tests/CharacterViewer.unity
+  - name: RedPointTest
+    path: Assets/Scenes/Tests/RedPointTest.unity
+  - name: TestScene
+    path: Assets/Scenes/Tests/TestScene.unity
+  - name: DemoScene_MultiCell
+    path: Assets/Plugins/LoopScrollRect-1.1.5/Samples/Demo/DemoScene_MultiCell.unity
+  - name: DemoScene_MultiCellFullScreen
+    path: Assets/Plugins/LoopScrollRect-1.1.5/Samples/Demo/DemoScene_MultiCellFullScreen.unity
+  - name: DemoSceneSingle
+    path: Assets/Plugins/LoopScrollRect-1.1.5/Samples/Demo/DemoSceneSingle.unity
+  - name: DemoScene
+    path: Assets/Plugins/LoopScrollRect-1.1.5/Samples/Demo/DemoScene.unity
+  - name: CustomPluginExample
+    path: Assets/DOTween Examples/CustomPlugin Example/CustomPluginExample.unity
+  - name: UGUI
+    path: Assets/DOTween Examples/UGUI.unity
+  - name: Sequences
+    path: Assets/DOTween Examples/Sequences.unity
+  - name: DOTweenPath
+    path: Assets/Plugins/Demigiant/DOTweenPro Examples/DOTweenPath.unity
+  - name: ScrollerAutoJump
+    path: Assets/DOTween Examples/ScrollerAutoJump/ScrollerAutoJump.unity
+  - name: Follow
+    path: Assets/DOTween Examples/Follow.unity
