@@ -1,35 +1,115 @@
 {
-    "version": 1,
-    "name": "InputActions",
-    "maps": [
+  "version": 1,
+  "name": "InputActions",
+  "maps": [
+    {
+      "name": "LuminesStandard",
+      "id": "74e3e469-d160-4bec-a42a-23324430dbd5",
+      "actions": [
         {
-            "name": "LuminesStandard",
-            "id": "74e3e469-d160-4bec-a42a-23324430dbd5",
-            "actions": [
-                {
-                    "name": "New action",
-                    "type": "Button",
-                    "id": "058832db-a5da-41b1-b554-2334b20e84ee",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "0112b467-6f82-4cf0-9992-675a69101648",
-                    "path": "",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "New action",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
+          "name": "MovePiece",
+          "type": "Value",
+          "id": "f1eb72ff-d16a-47ce-bc20-8b906d37f984",
+          "expectedControlType": "Vector2",
+          "processors": "",
+          "interactions": "",
+          "initialStateCheck": true
+        },
+        {
+          "name": "RotateCw",
+          "type": "Button",
+          "id": "37ec93d1-475c-466f-aa9c-c1cf52633053",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "Press(behavior=0)",
+          "initialStateCheck": false
+        },
+        {
+          "name": "RotateCcw",
+          "type": "Button",
+          "id": "d2b4a9b3-0799-4d5d-90b3-0574022b4a04",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "Press(behavior=0)",
+          "initialStateCheck": false
+        },
+        {
+          "name": "SoftDrop",
+          "type": "Button",
+          "id": "d4a05c4c-06d3-4b09-9c6f-127206da5a8e",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "Press(behavior=0)",
+          "initialStateCheck": false
+        },
+        {
+          "name": "HardDrop",
+          "type": "Button",
+          "id": "3ff84144-5ac9-4fce-8eb5-7c5d2d83986a",
+          "expectedControlType": "Button",
+          "processors": "",
+          "interactions": "Press(behavior=0)",
+          "initialStateCheck": false
         }
-    ],
-    "controlSchemes": []
+      ],
+      "bindings": [
+        {
+          "name": "",
+          "id": "939ceaea-9aeb-4e51-ae1a-b8aa3c903905",
+          "path": "<Gamepad>/leftStick",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "MovePiece",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "5f08dff5-e5d7-45b9-b5f5-033f059b284c",
+          "path": "<Gamepad>/buttonEast",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "RotateCw",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "a668ea3b-23af-4189-9fa6-8240821171c5",
+          "path": "<Gamepad>/buttonSouth",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "RotateCcw",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "ddaa0421-91d1-4ffd-99c0-118304b0b9dd",
+          "path": "<Gamepad>/rightShoulder",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "SoftDrop",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "2a4936f1-0abf-4e13-8029-beaf32297563",
+          "path": "<Gamepad>/leftShoulder",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "HardDrop",
+          "isComposite": false,
+          "isPartOfComposite": false
+        }
+      ]
+    }
+  ],
+  "controlSchemes": []
 }
