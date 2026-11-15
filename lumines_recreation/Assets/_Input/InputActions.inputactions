@@ -107,6 +107,105 @@
           "action": "HardDrop",
           "isComposite": false,
           "isPartOfComposite": false
+        },
+        {
+          "name": "WASD",
+          "id": "9f88b6f2-4101-4244-8c09-abade2fe96c1",
+          "path": "2DVector",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "MovePiece",
+          "isComposite": true,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "up",
+          "id": "7d8abc4f-390a-49ca-8e53-02dde8b3ddee",
+          "path": "<Keyboard>/w",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "MovePiece",
+          "isComposite": false,
+          "isPartOfComposite": true
+        },
+        {
+          "name": "down",
+          "id": "3e2122ca-a2c5-458a-a9b7-a184bc82db4f",
+          "path": "<Keyboard>/s",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "MovePiece",
+          "isComposite": false,
+          "isPartOfComposite": true
+        },
+        {
+          "name": "left",
+          "id": "41abc6bb-51b4-499b-ae9a-96e7f26d2090",
+          "path": "<Keyboard>/a",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "MovePiece",
+          "isComposite": false,
+          "isPartOfComposite": true
+        },
+        {
+          "name": "right",
+          "id": "549eb1b7-f543-4ece-b419-ab4ca026afc0",
+          "path": "<Keyboard>/d",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "MovePiece",
+          "isComposite": false,
+          "isPartOfComposite": true
+        },
+        {
+          "name": "",
+          "id": "3b136d81-6b78-4f88-8b73-b0282a79b8af",
+          "path": "<Keyboard>/l",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "RotateCw",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "e70068a5-16b5-4f51-9ff4-d3e4a0759c33",
+          "path": "<Keyboard>/j",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "RotateCcw",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "5ac06fa1-59d1-4722-b636-9ecbfdc54c94",
+          "path": "<Keyboard>/s",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "SoftDrop",
+          "isComposite": false,
+          "isPartOfComposite": false
+        },
+        {
+          "name": "",
+          "id": "eb00080c-c8fe-4729-8ec4-fe25404ac6b4",
+          "path": "<Keyboard>/space",
+          "interactions": "",
+          "processors": "",
+          "groups": "",
+          "action": "HardDrop",
+          "isComposite": false,
+          "isPartOfComposite": false
         }
       ]
     }
