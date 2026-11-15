@@ -8,28 +8,33 @@ namespace Lumines
     public class PieceVisual : MonoBehaviour
     {
         [Header("Prefabs")]
-        public Transform blockAPrefab;
-        public Transform blockBPrefab;
+        [SerializeField] private Transform blockAPrefab;
+        [SerializeField] private Transform blockBPrefab;
 
         [Header("Binding")]
-        public Transform rotateRoot;
-        public List<Transform> blockRootList = new List<Transform>();
+        [SerializeField] private Transform rotateRoot;
+        [SerializeField] private List<Transform> blockRootList = new List<Transform>();
 
         [Header("Animation")] 
-        public Vector3 rotateAnglePerStep = new Vector3(0, 0, 90f);
-        public float rotateDuration = 0.2f;
-        public AnimationCurve rotateCurve;
+        [SerializeField] private Vector3 rotateAnglePerStep = new Vector3(0, 0, 90f);
+        [SerializeField] private float rotateDuration = 0.2f;
+        [SerializeField] private AnimationCurve rotateCurve;
         
         private Tween _rotateTween;
         
+        public float RotateDuration => rotateDuration;
+        
         [Button]
-        public void RotateAnimation(int rotate, int ccw = 1)
+        public Tween RotateAnimation(int rotate, int ccw = 1)
         {
             _rotateTween?.Kill();
             
-            _rotateTween = 
-                rotateRoot.DORotate(rotate * ccw * rotateAnglePerStep, rotateDuration)
+            var tween = 
+                rotateRoot.DORotate(rotate * ccw * rotateAnglePerStep, rotateDuration, RotateMode.FastBeyond360)
                 .SetEase(rotateCurve);
+            
+            _rotateTween = tween;
+            return tween;
         }
         
         public void UpdatePiece(byte[, ] piece)

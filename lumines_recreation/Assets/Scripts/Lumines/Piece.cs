@@ -15,9 +15,10 @@ namespace Lumines
         
         [Header("Components")]
         public PieceVisual visual;
-        
+
         [Header("Movement")]
-        public float moveDuration = 0.2f;
+        public float dasMoveDurationPerTile = 0.04f;
+        public float normalMoveDuration = 0.12f;
         public bool useAnimCurve;
         public Ease ease = Ease.InOutQuad;
         public AnimationCurve moveAnimCurve = AnimationCurve.Linear(0, 0, 1, 1);
@@ -54,18 +55,30 @@ namespace Lumines
         public bool IsDropping => _isDropping;
         public bool IsRotating => _isRotating;
         
+        public bool IsDasMoving => _isDasMoving;
+        
         // TODO : temp
         public float rotateDuration = 0.2f;
         
         private Tween _moveTween;
-        
+        private float _lastDasStartTime;
+        private bool _isDasMoving;
+        private int _dasMoveCount;
+        private int _dasDirection;
+
         private void Awake()
         {
             visual = GetComponent<PieceVisual>();
         }
 
-        public void Init()
+        /// <summary>
+        /// basic init
+        /// </summary>
+        /// <param name="boardField"></param>
+        public void Init(BoardField boardField)
         {
+            _boardField = boardField;
+            
             _piece = RandomByteLast4Bits(0);
             piece[0, 0] = (byte)(_piece & 1);
             piece[1, 0] = (byte)((_piece >> 1) & 1);
@@ -101,7 +114,9 @@ namespace Lumines
             _rotateCount--;
             RotatePiece(-90f);
             
-            visual.RotateAnimation(_rotateCount, -1);
+            var tween = visual.RotateAnimation(_rotateCount, -1);
+
+            DOVirtual.DelayedCall(visual.RotateDuration, () => _isRotating = false);
         }
 
         public void CcwRotatePiece()
@@ -109,7 +124,8 @@ namespace Lumines
             _rotateCount++;
             RotatePiece(90f);
             
-            visual.RotateAnimation(_rotateCount);
+            var tween = visual.RotateAnimation(_rotateCount);
+            DOVirtual.DelayedCall(visual.RotateDuration, () => _isRotating = false);
         }
 
         private void RotatePiece(float angle)
@@ -144,27 +160,52 @@ namespace Lumines
 
         public void MoveLeft()
         {
-            if (_boardField.CheckPieceIsOutOfBound())
+            if (_isMoving)
             {
                 return;
             }
             
-            
+            // Debug.Log($"MoveLeft - targetGridPos: {_gridPos}");
+            var targetGridPos = new Vector2Int(_gridPos.x - 1, _gridPos.y);
+            if (_boardField.CheckPieceIsOutOfHorizontalBound(targetGridPos))
+            {
+                return;
+            }
+            // Debug.Log($"MoveLeft");
+
+            _gridPos = targetGridPos;
+            Move(true);
         }
         
         public void MoveRight()
         {
+            if (_isMoving)
+            {
+                return;
+            }
             
+            // Debug.Log($"MoveRight - targetGridPos: {_gridPos}");
+            var targetGridPos = new Vector2Int(_gridPos.x + 1, _gridPos.y);
+            if (_boardField.CheckPieceIsOutOfHorizontalBound(targetGridPos))
+            {
+                return;
+            }
+            // Debug.Log($"MoveRight");
+
+            _gridPos = targetGridPos;
+            Move(false);
         }
 
         [Button]
         private void Move(bool isLeft)
         {
-            _moveTween?.Kill();
+            _isMoving = true;
             
+            _moveTween?.Kill();
             var targetPos = new Vector3(_gridPos.x, _gridPos.y, 0);
+            
             var tween =
-                transform.DOMove(targetPos, moveDuration);
+                transform.DOLocalMove(targetPos, normalMoveDuration);
             if (useAnimCurve)
             {
                 tween.SetEase(moveAnimCurve);
@@ -173,18 +214,67 @@ namespace Lumines
             {
                 tween.SetEase(ease);
             }
+
+            tween.OnComplete(() => _isMoving = false);
             
             _moveTween = tween;
         }
-
+        
         private void Update()
         {
             GravityMoveDown();
+            
+            SmoothDasMove();
         }
 
         private void GravityMoveDown()
         {
             
+        }
+
+        public void StartDas(int direction)
+        {
+            Debug.Log($"StartDas - {direction}");
+            _lastDasStartTime = Time.time;
+            _isDasMoving = true;
+            _dasMoveCount = 0;
+            _dasDirection = direction;
+        }
+
+        public void EndDas()
+        {
+            Debug.Log("EndDas");
+            _isDasMoving = false;
+            _lastDasStartTime = -1f;
+            _dasDirection = 0;
+        }
+        
+        /// <summary>
+        /// smooth das move by player holding move key time
+        /// when the das is valid 
+        /// </summary>
+        private void SmoothDasMove()
+        {
+            if (!_isDasMoving)
+            {
+                return;
+            }
+            
+            // calculate das move distance
+            var dasInputDuration = Time.time - _lastDasStartTime;
+            Debug.Log($"{dasInputDuration} | {_dasMoveCount * dasMoveDurationPerTile}");
+            
+            // if deltaDasTime is enough for one tile moving
+            if (dasInputDuration >= _dasMoveCount * dasMoveDurationPerTile)
+            {
+                _dasMoveCount++;
+                
+                // calculate piece position by deltaDas value
+                var targetPosX = _gridPos.x + _dasMoveCount * _dasDirection;
+                var clampPos = _boardField.ClampPieceHorizontalPosition(new Vector2Int(targetPosX, _gridPos.y));
+                transform.localPosition = new Vector3(clampPos.x, clampPos.y, 0);
+                _gridPos = clampPos;
+            }
         }
 
         #region Tools
@@ -216,7 +306,6 @@ namespace Lumines
         }
 
         #endregion
-        
        
     }
 }

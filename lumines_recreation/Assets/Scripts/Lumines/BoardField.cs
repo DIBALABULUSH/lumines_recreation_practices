@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Lumines
@@ -7,13 +8,29 @@ namespace Lumines
     /// </summary>
     public class BoardField : MonoBehaviour
     {
+        [Header("Components")]
+        [SerializeField] private Transform pieceSpawnRoot;
+        [SerializeField] private Transform pieceContainer;
         
         private Vector2Int _boardSize = new Vector2Int(16, 10);
         public Vector2Int BoardSize => _boardSize;
+        public Vector3 PieceSpawnPosition => pieceSpawnRoot.position;
+        public Transform PieceContainer => pieceContainer;
 
-        public bool CheckPieceIsOutOfBound()
+        /// <summary>
+        /// check the standard 2x2 piece is out of bound, only check horizontally.
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckPieceIsOutOfHorizontalBound(Vector2Int piecePos)
         {
-            return false;
+            return piecePos.x >= _boardSize.x || piecePos.x <= 0;
+        }
+        
+        public Vector2Int ClampPieceHorizontalPosition(Vector2Int piecePos)
+        {
+            var x = Math.Clamp(piecePos.x, 1, _boardSize.x - 1);
+            
+            return new Vector2Int(x, piecePos.y);
         }
     }
 }

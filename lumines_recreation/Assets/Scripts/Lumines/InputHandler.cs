@@ -44,7 +44,8 @@ namespace Lumines
         {
             if (!context.performed && !context.canceled)
                 return;
-
+            
+            
             MoveInput = context.canceled ? Vector2.zero : context.ReadValue<Vector2>();
             MovePiece?.Invoke(MoveInput);
         }
