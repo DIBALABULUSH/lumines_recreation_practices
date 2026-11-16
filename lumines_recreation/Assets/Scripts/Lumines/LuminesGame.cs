@@ -11,12 +11,10 @@ namespace Lumines
     /// </summary>
     public class LuminesGame : MonoBehaviour
     {
-        [Header("Resource")] 
-        [SerializeField] private Piece piecePrefab;
-        
         [Header("Components")]
         [SerializeField] private BoardField boardField;
         [SerializeField] private InputHandler inputHandler;
+        [SerializeField] private NextPiecePreviewSequence nextPiecePreviewSequence;
 
         [Header("Gameplay Settings")] 
         [SerializeField] private float dasWindow = 0.1f;
@@ -24,7 +22,6 @@ namespace Lumines
         [SerializeField] private float continueMoveInterval = 0.04f;
         
         private Piece _currentPiece;
-        private Queue<Piece> _queue = new Queue<Piece>();
         
         private readonly float _controllerInputThreshold = 0.05f;
 
@@ -81,7 +78,7 @@ namespace Lumines
 
             // if current piece is moving, then input come in
             // todo : we should handle the input buffer
-            if (_currentPiece.IsMoving)
+            if (_currentPiece.IsHorizontalMoving)
             {
                 // todo : move input buffer
                 Debug.Log($"Piece is Moving, Skipped");
@@ -185,8 +182,11 @@ namespace Lumines
 
         private Piece SpawnPiece()
         {
-            var piece = Instantiate(piecePrefab, boardField.PieceContainer, true);
-            piece.Init(boardField);
+            // var piece = Instantiate(piecePrefab, boardField.PieceContainer, true);
+            // piece.Init(boardField);
+
+            var piece = nextPiecePreviewSequence.EnqueueAndSupplementTailPieceInSequence();
+            
             piece.transform.position = boardField.PieceSpawnPosition;
             return piece;
         }
@@ -198,6 +198,35 @@ namespace Lumines
         }
 
         private void FillTheNexPieceQueue()
+        {
+            
+        }
+
+        #endregion
+
+        #region Game Check
+
+        public void GameStart()
+        {
+            // todo: clear the board
+            
+            // gen next piece preview sequence
+            nextPiecePreviewSequence.FillThePreviewSequence();
+            
+            // take one and set to current piece
+            var startPiece = nextPiecePreviewSequence.EnqueueAndSupplementTailPieceInSequence();
+            _currentPiece = startPiece;
+            
+            // reset some visual effects
+            
+            // all done!!
+        }
+        
+        /// <summary>
+        /// when every piece locked.
+        /// check there is any 'piece' (not block) on the board field
+        /// </summary>
+        private void CheckGameEnd()
         {
             
         }

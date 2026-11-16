@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -7,7 +8,9 @@ using Random = System.Random;
 namespace Lumines
 {
     /// <summary>
-    /// Lumines Piece
+    /// Lumines Piece,
+    /// piece don't care how it generated
+    /// it only set up by bytes value
     /// </summary>
     public class Piece : MonoBehaviour
     {
@@ -23,22 +26,34 @@ namespace Lumines
         public Ease ease = Ease.InOutQuad;
         public AnimationCurve moveAnimCurve = AnimationCurve.Linear(0, 0, 1, 1);
         
+        [Header("Dropdown")]
+        public float gravityDropDurationPerTile = 1f;
+        public float hardDropDurationPerTile = 0.15f;
+        
         // Piece type
         private readonly byte[,] piece = new byte[2, 2];
         
         private readonly Vector2 rotateCenter = new Vector2(0.5f, 0.5f);
+
+        private List<PieceBlock> _pieceBlockList;
         
         // base data
-        private byte _piece;
+        private byte _pieceByte;
         private int _rotateCount;
         // use center position, range is [0, 20]
         // standard spawn pos is (8, 11)
         private Vector2Int _gridPos;
 
+        // Piece spawn time
+        private float _spawnTime;
         // gravity and delay setting
         private float _gravity;
+        // delay duration
         private float _gravityDelay;
-        private float _lockedDelay;
+        // piece landed and start counting lock delay 
+        private float _lockStartTime;
+        // land delay before locked
+        private float _lockDelay;
         
         // piece movement status,
         // normally the rotate and move don't affect each other
@@ -46,13 +61,16 @@ namespace Lumines
         // we can allow soft drop mode doing rotate when dropping 
         // todo : currently we implement the hard drop mode, implement the soft mode laterly
         private bool _isRotating;
-        private bool _isMoving;
-        private bool _isDropping;
+        private bool _isHorizontalMoving;
+        private bool _isHardDropping;
+        private bool _isGravityDropping;
+        // this status can be switched between _isDropping and itself 
+        private bool _isLanded;
 
         private float _lastRotateTime;
 
-        public bool IsMoving => _isMoving;
-        public bool IsDropping => _isDropping;
+        public bool IsHorizontalMoving => _isHorizontalMoving;
+        public bool IsHardDropping => _isHardDropping;
         public bool IsRotating => _isRotating;
         
         public bool IsDasMoving => _isDasMoving;
@@ -61,11 +79,15 @@ namespace Lumines
         public float rotateDuration = 0.2f;
         
         private Tween _moveTween;
+        // DAS stuffs
         private float _lastDasStartTime;
         private bool _isDasMoving;
         private int _dasMoveCount;
         private int _dasDirection;
 
+        // Dropdown stuffs
+        private float _hardDropStartTime;
+        
         private void Awake()
         {
             visual = GetComponent<PieceVisual>();
@@ -75,15 +97,17 @@ namespace Lumines
         /// basic init
         /// </summary>
         /// <param name="boardField"></param>
-        public void Init(BoardField boardField)
+        /// <param name="pieceValue"></param>
+        public void Init(BoardField boardField, byte pieceValue)
         {
+            _spawnTime = Time.time;
             _boardField = boardField;
-            
-            _piece = RandomByteLast4Bits(0);
-            piece[0, 0] = (byte)(_piece & 1);
-            piece[1, 0] = (byte)((_piece >> 1) & 1);
-            piece[0, 1] = (byte)((_piece >> 2) & 1);
-            piece[1, 1] = (byte)((_piece >> 3) & 1);
+
+            _pieceByte = pieceValue;
+            piece[0, 0] = (byte)(_pieceByte & 1);
+            piece[1, 0] = (byte)((_pieceByte >> 1) & 1);
+            piece[0, 1] = (byte)((_pieceByte >> 2) & 1);
+            piece[1, 1] = (byte)((_pieceByte >> 3) & 1);
             _rotateCount = 0;
 
             _gridPos = new Vector2Int(8, 11);
@@ -91,7 +115,8 @@ namespace Lumines
 
         public void TryRotate(bool ccw)
         {
-            if (_isRotating || Time.time - _lastRotateTime < rotateDuration)
+            var rotateColdDown = Time.time - _lastRotateTime < rotateDuration;
+            if (_isRotating || rotateColdDown || _isHardDropping)
             {
                 return;
             }
@@ -109,7 +134,7 @@ namespace Lumines
             }
         }
         
-        public void CwRotatePiece()
+        private void CwRotatePiece()
         {
             _rotateCount--;
             RotatePiece(-90f);
@@ -119,7 +144,7 @@ namespace Lumines
             DOVirtual.DelayedCall(visual.RotateDuration, () => _isRotating = false);
         }
 
-        public void CcwRotatePiece()
+        private void CcwRotatePiece()
         {
             _rotateCount++;
             RotatePiece(90f);
@@ -160,7 +185,8 @@ namespace Lumines
 
         public void MoveLeft()
         {
-            if (_isMoving)
+            // can't move when hard drop
+            if (_isHorizontalMoving || _isHardDropping)
             {
                 return;
             }
@@ -179,7 +205,8 @@ namespace Lumines
         
         public void MoveRight()
         {
-            if (_isMoving)
+            // can't move when hard drop
+            if (_isHorizontalMoving || _isHardDropping)
             {
                 return;
             }
@@ -199,7 +226,13 @@ namespace Lumines
         [Button]
         private void Move(bool isLeft)
         {
-            _isMoving = true;
+            // can't move when hard drop
+            if (_isHardDropping)
+            {
+                return;
+            }
+            
+            _isHorizontalMoving = true;
             
             _moveTween?.Kill();
             var targetPos = new Vector3(_gridPos.x, _gridPos.y, 0);
@@ -215,21 +248,117 @@ namespace Lumines
                 tween.SetEase(ease);
             }
 
-            tween.OnComplete(() => _isMoving = false);
+            tween.OnComplete(() => _isHorizontalMoving = false);
             
             _moveTween = tween;
+        }
+
+        public void StartHardDropping()
+        {
+            _isHardDropping = true;
+            
+            // pause horizontal moving and rotation
+            // the animation still continue playing
+            _isHorizontalMoving = false;
+            _isRotating = false;
+            
+            _hardDropStartTime = Time.time;
         }
         
         private void Update()
         {
-            GravityMoveDown();
-            
+            GravityDropDown();
             SmoothDasMove();
         }
 
-        private void GravityMoveDown()
+        /// <summary>
+        /// Hard drop piece.
+        /// starting hard drop will disable the horizontal move and rotation
+        /// </summary>
+        public void UpdateHardDropDown()
+        {
+            if (!_isHardDropping)
+            {
+                return;
+            }
+            
+            var hardDropTimePass = Time.time - _hardDropStartTime;
+            var frameMoveDistance = hardDropTimePass / hardDropDurationPerTile;
+            
+            var targetPosY = _boardField.PieceSpawnPos - frameMoveDistance;
+            transform.localPosition = new Vector3(_gridPos.x, targetPosY, 0);
+            
+            // todo : Mathf.RoundToInt is not good check for update grid pos, update this later
+            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(_gridPos.y));
+
+            // check the piece is touch something then directly lock the piece
+            var result = _boardField.CheckPieceIsTouchSomethingBottom(this);
+            if (result)
+            {
+                LockPiece();
+            }
+        }
+        
+        /// <summary>
+        /// the piece is dropping because of the game gravity
+        /// </summary>
+        private void GravityDropDown()
+        {
+            if (_isHardDropping)
+            {
+                return;
+            }
+            
+            var timePassWhenSpawn = Time.time - _spawnTime;
+            if (timePassWhenSpawn < _gravityDelay)
+            {
+                return;
+            }
+
+            var fallingTiles = timePassWhenSpawn / gravityDropDurationPerTile;
+            var targetPosY = _boardField.PieceSpawnPos - fallingTiles;
+            transform.localPosition = new Vector3(_gridPos.x, targetPosY, 0);
+            
+            // todo : Mathf.RoundToInt is not good check for update grid pos, update this later
+            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(_gridPos.y));
+            
+            // check the piece is touch something and start counting the lock delay
+        }
+
+        private void StartCountingLockPiece()
+        {
+            _lockStartTime = Time.time;
+        }
+
+        private void UpdateTimerToLockPiece()
         {
             
+        }
+        
+        /// <summary>
+        /// lock piece itself,
+        /// split it then notice the game to spawn next piece and get next pice
+        /// </summary>
+        private void LockPiece()
+        {
+            
+            
+            SplitPieceBlock();
+        }
+        
+        /// <summary>
+        /// split the piece after locked the piece
+        /// </summary>
+        private void SplitPieceBlock()
+        {
+            // reverse iteration and detach the block inside the piece
+            for (var i = _pieceBlockList.Count - 1; i >= 0 ; i--)
+            {
+                var block = _pieceBlockList[i];
+                block.transform.SetParent(_boardField.PieceContainer, true);
+                block.StartFreeFall();
+                _pieceBlockList.RemoveAt(i);
+            }
         }
 
         public void StartDas(int direction)
@@ -272,6 +401,8 @@ namespace Lumines
                 // calculate piece position by deltaDas value
                 var targetPosX = _gridPos.x + _dasMoveCount * _dasDirection;
                 var clampPos = _boardField.ClampPieceHorizontalPosition(new Vector2Int(targetPosX, _gridPos.y));
+                
+                // todo : currently its not smooth right now, we will do it in future lol
                 transform.localPosition = new Vector3(clampPos.x, clampPos.y, 0);
                 _gridPos = clampPos;
             }
@@ -292,17 +423,6 @@ namespace Lumines
             var y = -point.x * Mathf.Sin(rad) + point.y * Mathf.Cos(rad);
             
             return new Vector2(x, y);
-        }
-
-        private byte RandomByteLast4Bits(byte value)
-        {
-            // gen random 0 ~ 15 number
-            int randomBits = new Random().Next(0, 16);
-
-            // keep high 4 bits, random low 4 bits
-            value = (byte)((value & 0xF0) | randomBits);
-
-            return value;
         }
 
         #endregion
