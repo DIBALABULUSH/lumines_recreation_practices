@@ -22,6 +22,7 @@ namespace Lumines
         [Header("Movement")]
         public float dasMoveDurationPerTile = 0.04f;
         public float normalMoveDuration = 0.12f;
+        public float moveSmoothValue = 0.1f;
         public bool useAnimCurve;
         public Ease ease = Ease.InOutQuad;
         public AnimationCurve moveAnimCurve = AnimationCurve.Linear(0, 0, 1, 1);
@@ -41,9 +42,9 @@ namespace Lumines
         private byte _pieceByte;
         private int _rotateCount;
         // use center position, range is [0, 20]
-        // standard spawn pos is (8, 11)
+        // standard spawn pos is (8, 11),
+        // and this position is align to the grid system
         private Vector2Int _gridPos;
-        private Vector2 _continuePos;
 
         // Piece spawn time
         private float _spawnTime;
@@ -52,7 +53,7 @@ namespace Lumines
         // delay duration
         [SerializeField] private float _gravityDelay = 0.5f;
         // piece landed and start counting lock delay 
-        private float _lockStartTime;
+        private float _lockStartCountingTime;
         // land delay before locked
         private float _lockDelay;
         
@@ -102,6 +103,8 @@ namespace Lumines
 
             var pieceBlocks = GetComponentsInChildren<PieceBlock>();
             _pieceBlockList.AddRange(pieceBlocks);
+
+            _lockStartCountingTime = -1f;
         }
 
         /// <summary>
@@ -218,7 +221,7 @@ namespace Lumines
             // Debug.Log($"MoveLeft");
 
             _gridPos = targetGridPos;
-            MoveHorizontally(true);
+            // MoveHorizontally(true);
         }
         
         public void MoveRight()
@@ -238,7 +241,7 @@ namespace Lumines
             // Debug.Log($"MoveRight");
 
             _gridPos = targetGridPos;
-            MoveHorizontally(false);
+            // MoveHorizontally(false);
         }
 
         [Button]
@@ -286,9 +289,9 @@ namespace Lumines
         private void Update()
         {
             UpdateHardDropDown();
+            UpdateGravityDropDown();
             
-            GravityDropDown();
-            SmoothDasMove();
+            UpdateSmoothHorizontalMove();
         }
 
         /// <summary>
@@ -327,15 +330,24 @@ namespace Lumines
         /// <summary>
         /// the piece is dropping because of the game gravity
         /// </summary>
-        private void GravityDropDown()
+        private void UpdateGravityDropDown()
         {
             if (_isHardDropping)
             {
                 return;
             }
             
-            var timePassWhenSpawn = Time.time - _spawnTime;
-            if (timePassWhenSpawn < _gravityDelay)
+            // check the piece is touch something and start counting the lock delay
+            var reachGround = _boardField.CheckPieceIsTouchedGround(transform.localPosition);
+            if (reachGround)
+            {
+                // already reach the ground, set piece into right ground position
+                transform.localPosition = new Vector3(transform.localPosition.x, 1f, 0);
+                return;
+            }
+            
+            var timePassSinceSpawn = Time.time - _spawnTime;
+            if (timePassSinceSpawn < _gravityDelay)
             {
                 return;
             }
@@ -343,17 +355,18 @@ namespace Lumines
             var deltaFallingTiles = Time.deltaTime / gravityDropDurationPerTile;
             // var targetPosY = _boardField.PieceSpawnPos - fallingTiles;
             var targetPosY = transform.localPosition.y - deltaFallingTiles;
-            transform.localPosition = new Vector3(_gridPos.x, targetPosY, 0);
+            transform.localPosition = new Vector3(transform.localPosition.x, targetPosY, 0);
             
             // todo : Mathf.RoundToInt is not good check for update grid pos, update this later
-            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(targetPosY));
+            _gridPos = new Vector2Int(_gridPos.x, Mathf.CeilToInt(targetPosY));
             
-            // check the piece is touch something and start counting the lock delay
+            Debug.Log("Gravity" + _gridPos);
+            
         }
 
         private void StartCountingLockPiece()
         {
-            _lockStartTime = Time.time;
+            _lockStartCountingTime = Time.time;
         }
 
         private void UpdateTimerToLockPiece()
@@ -412,13 +425,17 @@ namespace Lumines
         }
         
         /// <summary>
-        /// smooth das move by player holding move key time
+        /// smooth horizontal move by player holding move key time
         /// when the das is valid 
         /// </summary>
-        private void SmoothDasMove()
+        private void UpdateSmoothHorizontalMove()
         {
             if (!_isDasMoving)
             {
+
+                var targetPosX = Mathf.Lerp(transform.localPosition.x, _gridPos.x, moveSmoothValue);
+                transform.localPosition = new Vector3(targetPosX, transform.localPosition.y, 0);
+                
                 return;
             }
             
@@ -436,9 +453,14 @@ namespace Lumines
                 var clampPos = _boardField.ClampPieceHorizontalPosition(new Vector2Int(targetPosX, _gridPos.y));
                 
                 // todo : currently its not smooth right now, we will do it in future lol
-                transform.localPosition = new Vector3(clampPos.x, clampPos.y, 0);
+                // transform.localPosition = new Vector3(clampPos.x, clampPos.y, 0);
+
                 _gridPos = clampPos;
             }
+            
+            // update piece move while DASing
+            var finalPosX = Mathf.Lerp(transform.localPosition.x, _gridPos.x, moveSmoothValue);
+            transform.localPosition = new Vector3(finalPosX, transform.localPosition.y, 0);
         }
 
         #region Tools
@@ -459,6 +481,6 @@ namespace Lumines
         }
 
         #endregion
-       
+        
     }
 }

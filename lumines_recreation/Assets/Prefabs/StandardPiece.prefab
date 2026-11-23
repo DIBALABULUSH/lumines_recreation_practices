@@ -116,6 +116,7 @@ MonoBehaviour:
   visual: {fileID: 6136043062110825719}
   dasMoveDurationPerTile: 0.04
   normalMoveDuration: 0.12
+  moveSmoothValue: 0.12
   useAnimCurve: 0
   ease: 7
   moveAnimCurve:

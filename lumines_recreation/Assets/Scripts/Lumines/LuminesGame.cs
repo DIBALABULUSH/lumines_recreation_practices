@@ -15,6 +15,7 @@ namespace Lumines
         [SerializeField] private BoardField boardField;
         [SerializeField] private InputHandler inputHandler;
         [SerializeField] private NextPiecePreviewSequence nextPiecePreviewSequence;
+        [SerializeField] private PiecePosIndicator piecePosIndicator;
 
         [Header("Gameplay Settings")] 
         [SerializeField] private float dasWindow = 0.1f;
@@ -209,6 +210,8 @@ namespace Lumines
             _currentPiece.transform.position = boardField.PieceSpawnPosition;
             _currentPiece.transform.localScale = Vector3.one;
             _currentPiece.enabled = true;
+            
+            piecePosIndicator.SetFollowedPiece(_currentPiece);
             
             return piece;
         }

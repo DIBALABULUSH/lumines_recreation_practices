@@ -73,6 +73,11 @@ namespace Lumines
         {
             return piecePos.x >= _boardSize.x || piecePos.x <= 0;
         }
+
+        public bool CheckPieceIsTouchedGround(Vector2 pieceContinuePos)
+        {
+            return pieceContinuePos.y <= 1f;
+        }
         
         public Vector2Int ClampPieceHorizontalPosition(Vector2Int piecePos)
         {
