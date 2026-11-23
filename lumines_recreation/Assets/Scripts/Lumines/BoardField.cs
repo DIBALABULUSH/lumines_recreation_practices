@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace Lumines
@@ -14,7 +15,7 @@ namespace Lumines
         [SerializeField] private Transform pieceSpawnRoot;
         [SerializeField] private Transform pieceContainer;
         
-        private Queue<PieceBlock>[] _pieceBlockQueueArray;
+        private List<PieceBlock>[] _pieceBlockListArray;
         
         private Vector2Int _boardSize = new Vector2Int(16, 10);
         public Vector2Int BoardSize => _boardSize;
@@ -30,22 +31,24 @@ namespace Lumines
 
         public void Init()
         {
-            _pieceBlockQueueArray ??= new Queue<PieceBlock>[_boardSize.x];
+            _pieceBlockListArray ??= new List<PieceBlock>[_boardSize.x];
 
-            for (var i = 0; i < _pieceBlockQueueArray.Length; i++)
+            for (var i = 0; i < _pieceBlockListArray.Length; i++)
             {
-                _pieceBlockQueueArray[i] ??= new Queue<PieceBlock>();
-                _pieceBlockQueueArray[i]?.Clear();
-            }
+                _pieceBlockListArray[i] ??= new List<PieceBlock>();
+                _pieceBlockListArray[i]?.Clear();
+                
+                _pieceBlockListArray[i].SetLength(10);
+            } 
         }
 
-        public bool PlaceBlockOnField(Vector2Int gridPos)
+        public bool PlaceBlockOnField(PieceBlock block, Vector2Int gridPos)
         {
             var col = gridPos.x;
             var row = gridPos.y;
             
             // out array bound check
-            if (col < 0 || col >= _pieceBlockQueueArray.Length)
+            if (col < 0 || col >= _pieceBlockListArray.Length)
             {
                 Debug.Log($"Invalid grid position: {gridPos} for placing block on field");
                 return false;
@@ -54,15 +57,20 @@ namespace Lumines
             // Debug.Log($"Get block queue on col[{col}]");
             
             // get the column in board field
-            var blockQueue = _pieceBlockQueueArray[col];
-            var topBlockPosInColumn = Math.Clamp(blockQueue.Count - 1, 0, Math.Max(0, blockQueue.Count - 1));
+            var blockList = _pieceBlockListArray[col];
 
-            for (var i = 0; i < blockQueue.Count; i++)
+            var targetBlock = blockList[row];
+            if (targetBlock == null)
             {
-                
+                Debug.Log($"Place block on {gridPos}");
+                blockList[row] = block;
+                return true;
             }
-            
-            return true;
+            else
+            { 
+                Debug.LogWarning("Target position already have an existing block");
+                return false;
+            }
         }
         
         /// <summary>
@@ -73,11 +81,6 @@ namespace Lumines
         {
             return piecePos.x >= _boardSize.x || piecePos.x <= 0;
         }
-
-        public bool CheckPieceIsTouchedGround(Vector2 pieceContinuePos)
-        {
-            return pieceContinuePos.y <= 1f;
-        }
         
         public Vector2Int ClampPieceHorizontalPosition(Vector2Int piecePos)
         {
@@ -86,10 +89,10 @@ namespace Lumines
             return new Vector2Int(x, piecePos.y);
         }
 
-        public int GetBoardFieldColumnTopPosition(int col)
+        public int GetBoardFieldColumnTopEmptyPosition(int col)
         {
             // out array bound check
-            if (col < 0 || col >= _pieceBlockQueueArray.Length)
+            if (col < 0 || col >= _pieceBlockListArray.Length)
             {
                 return -1;
             }
@@ -97,13 +100,21 @@ namespace Lumines
             // Debug.Log($"Get block queue on col[{col}]");
             
             // get the column in board field
-            var blockQueue = _pieceBlockQueueArray[col];
-            var topBlockPosInColumn = Math.Clamp(blockQueue.Count - 1, 0, Math.Max(0, blockQueue.Count - 1));
+            var blockList = _pieceBlockListArray[col];
+
+            for (var i = 0; i < blockList.Count; i++)
+            {
+                var block = blockList[i];
+                if (block == null)
+                {
+                    return i;
+                }
+            }
             
-            return topBlockPosInColumn;
+            return -1;
         }
 
-        public bool CheckIsTherePieceUnderThePiece(Piece piece)
+        public bool CheckIsThereBlockUnderThePiece(Piece piece)
         {
             // we can directly check the piece under the piece by _gridPos
             // but considering the dynamic freefall and piece attachment
@@ -111,16 +122,17 @@ namespace Lumines
             
             
             // check piece bottom block is touch other blocks on the board field
-            var pieceBottomBlockPosY = piece.GridPos.y - 1;
-            var leftColTop = GetBoardFieldColumnTopPosition(piece.GridPos.x - 1);
-            var rightColTop = GetBoardFieldColumnTopPosition(piece.GridPos.x);
+            var pieceBottomBlockPosY = piece.transform.localPosition.y - 1;
+            var leftColTop = GetBoardFieldColumnTopEmptyPosition(piece.GridPieceCenterPos.x - 1);
+            var rightColTop = GetBoardFieldColumnTopEmptyPosition(piece.GridPieceCenterPos.x);
+            
             if (pieceBottomBlockPosY - leftColTop <= 1 || pieceBottomBlockPosY - rightColTop <= 1)
             {
                 return true;
             }
             
-            // check ground, 1 is the lowest position for the standard lumines piece
-            if (piece.GridPos.y <= 1)
+            // check ground, 1 is the lowest position Y for the standard lumines piece(use center position)
+            if (piece.transform.localPosition.y <= 1f)
             {
                 return true;
             }

@@ -151,6 +151,7 @@ MonoBehaviour:
   - {fileID: 6147886936500922571}
   - {fileID: 5423107788382581938}
   _gravityDelay: 0.5
+  _lockDelay: 0.1
   rotateDuration: 0.2
 --- !u!114 &6136043062110825719
 MonoBehaviour:

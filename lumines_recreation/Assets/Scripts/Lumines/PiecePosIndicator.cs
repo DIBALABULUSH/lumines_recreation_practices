@@ -28,7 +28,7 @@ namespace Lumines
             }
             
             // meh, just directly update the data from the followed piece
-            var targetPosX =  followedPiece.GridPos.x;
+            var targetPosX =  followedPiece.GridPieceCenterPos.x;
             transform.localPosition = new Vector3(targetPosX,  transform.localPosition.y, transform.localPosition.z);
         }
     }

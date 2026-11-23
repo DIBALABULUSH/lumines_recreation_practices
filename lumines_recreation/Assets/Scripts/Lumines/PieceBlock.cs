@@ -16,7 +16,7 @@ namespace Lumines
 
         // the block drop down when the blocks under this block are clear
         private bool _isFreeFalling;
-
+        
         public void SetBoardField(BoardField boardField)
         {
             _boardField = boardField;
@@ -39,21 +39,49 @@ namespace Lumines
                 return;
             }
 
-            var columnTopPosition =
-                _boardField.GetBoardFieldColumnTopPosition(_gridPosition.x);
-            var targetPosition = columnTopPosition + 1;
+            // TODO : free falling code logic
             
-            if (_gridPosition.y == targetPosition)
+            CheckAndLockBlock();
+        }
+
+        private void CheckAndLockBlock()
+        {
+            var columnTopEmptyPosition =
+                _boardField.GetBoardFieldColumnTopEmptyPosition(_gridPosition.x);
+            if (columnTopEmptyPosition < 0)
             {
-                LockBlock();
+                Debug.LogWarning("Column Top Position is negative");
+                return;
             }
+
+            var targetGridPosition = columnTopEmptyPosition;
+            if (transform.localPosition.y > targetGridPosition)
+            {
+                return;
+            }
+
+            LockBlock();
+            
+            // 0.5 is for set the block in the grid center
+            transform.localPosition = 
+                new Vector3(transform.localPosition.x, targetGridPosition + 0.5f, transform.localPosition.z);
         }
 
         private void LockBlock()
         {
             _isFreeFalling = false;
             
-            _boardField.PlaceBlockOnField(_gridPosition);
+            _boardField.PlaceBlockOnField(this, _gridPosition);
+            
+            Debug.Log($"Lock block on {_gridPosition}");
+        }
+
+        public void SetGridPos(Vector2Int gridPosition)
+        {
+            _gridPosition = gridPosition;
+            Debug.Log($"Set block grid pos with {_gridPosition}");
+            
+            CheckAndLockBlock();
         }
     }
 }

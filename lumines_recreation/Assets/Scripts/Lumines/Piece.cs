@@ -32,7 +32,7 @@ namespace Lumines
         public float hardDropDurationPerTile = 0.015f;
         
         // Piece type
-        private readonly byte[,] piece = new byte[2, 2];
+        private readonly byte[] piece = new byte[4];
         
         private readonly Vector2 rotateCenter = new Vector2(0.5f, 0.5f);
 
@@ -44,7 +44,7 @@ namespace Lumines
         // use center position, range is [0, 20]
         // standard spawn pos is (8, 11),
         // and this position is align to the grid system
-        private Vector2Int _gridPos;
+        private Vector2Int _gridPieceCenterPos;
 
         // Piece spawn time
         private float _spawnTime;
@@ -53,9 +53,10 @@ namespace Lumines
         // delay duration
         [SerializeField] private float _gravityDelay = 0.5f;
         // piece landed and start counting lock delay 
-        private float _lockStartCountingTime;
+        private float _lockStartCountingTime = -1f;
         // land delay before locked
-        private float _lockDelay;
+        [SerializeField] private float _lockDelay;
+        private bool _isLocked;
         
         // piece movement status,
         // normally the rotate and move don't affect each other
@@ -71,7 +72,7 @@ namespace Lumines
 
         private float _lastRotateTime;
 
-        public Vector2Int GridPos => _gridPos;
+        public Vector2Int GridPieceCenterPos => _gridPieceCenterPos;
         public bool IsHorizontalMoving => _isHorizontalMoving;
         public bool IsHardDropping => _isHardDropping;
         public bool IsRotating => _isRotating;
@@ -90,6 +91,7 @@ namespace Lumines
 
         // Dropdown stuffs
         private float _hardDropStartTime;
+        public event Action<Piece> OnPieceLocked;
         
         private void Awake()
         {
@@ -118,13 +120,17 @@ namespace Lumines
             _boardField = boardField;
 
             _pieceByte = pieceValue;
-            piece[0, 0] = (byte)(_pieceByte & 1);
-            piece[1, 0] = (byte)((_pieceByte >> 1) & 1);
-            piece[0, 1] = (byte)((_pieceByte >> 2) & 1);
-            piece[1, 1] = (byte)((_pieceByte >> 3) & 1);
+            if (piece != null)
+            {
+                piece[0] = (byte)(_pieceByte & 1);
+                piece[1] = (byte)((_pieceByte >> 1) & 1);
+                piece[2] = (byte)((_pieceByte >> 2) & 1);
+                piece[3] = (byte)((_pieceByte >> 3) & 1);
+            }
+
             _rotateCount = 0;
 
-            _gridPos = new Vector2Int(8, 11);
+            _gridPieceCenterPos = new Vector2Int(8, 11);
             
             foreach (var pieceBlock in _pieceBlockList)
             {
@@ -181,6 +187,7 @@ namespace Lumines
             {
                 for (int y = 0; y < 2; y++)
                 {
+                    var index = y * x + y;
                     var point = new Vector2(x, y);
                     // use rotate matrix to rotate the coord with the 0.5, 0.5 point
                     // create a coordinate based on 0.5, 0.5 point
@@ -190,7 +197,7 @@ namespace Lumines
                     var newX = (int)targetCoord.x;
                     var newY = (int)targetCoord.y;
                     // cache calculate result
-                    newPiece[newX, newY] = piece[x, y];
+                    newPiece[newX, newY] = piece[index];
                 }
             }
 
@@ -199,7 +206,8 @@ namespace Lumines
             {
                 for (int y = 0; y < 2; y++)
                 {
-                    piece[x, y] = newPiece[x, y];
+                    var index = y * x + y;
+                    piece[index] = newPiece[x, y];
                 }
             }
         }
@@ -213,14 +221,14 @@ namespace Lumines
             }
             
             // Debug.Log($"MoveLeft - targetGridPos: {_gridPos}");
-            var targetGridPos = new Vector2Int(_gridPos.x - 1, _gridPos.y);
+            var targetGridPos = new Vector2Int(_gridPieceCenterPos.x - 1, _gridPieceCenterPos.y);
             if (_boardField.CheckPieceIsOutOfHorizontalBound(targetGridPos))
             {
                 return;
             }
             // Debug.Log($"MoveLeft");
 
-            _gridPos = targetGridPos;
+            _gridPieceCenterPos = targetGridPos;
             // MoveHorizontally(true);
         }
         
@@ -233,14 +241,14 @@ namespace Lumines
             }
             
             // Debug.Log($"MoveRight - targetGridPos: {_gridPos}");
-            var targetGridPos = new Vector2Int(_gridPos.x + 1, _gridPos.y);
+            var targetGridPos = new Vector2Int(_gridPieceCenterPos.x + 1, _gridPieceCenterPos.y);
             if (_boardField.CheckPieceIsOutOfHorizontalBound(targetGridPos))
             {
                 return;
             }
             // Debug.Log($"MoveRight");
 
-            _gridPos = targetGridPos;
+            _gridPieceCenterPos = targetGridPos;
             // MoveHorizontally(false);
         }
 
@@ -256,7 +264,7 @@ namespace Lumines
             _isHorizontalMoving = true;
             
             _moveTween?.Kill();
-            var targetPos = new Vector3(_gridPos.x, _gridPos.y, 0);
+            var targetPos = new Vector3(_gridPieceCenterPos.x, _gridPieceCenterPos.y, 0);
             
             var tween =
                 transform.DOLocalMoveX(targetPos.x, normalMoveDuration);
@@ -292,6 +300,8 @@ namespace Lumines
             UpdateGravityDropDown();
             
             UpdateSmoothHorizontalMove();
+            
+            UpdateTimerToLockPiece();
         }
 
         /// <summary>
@@ -305,6 +315,12 @@ namespace Lumines
                 return;
             }
             
+            var isReachSomething = _boardField.CheckIsThereBlockUnderThePiece(this);
+            if (isReachSomething)
+            {
+                return;
+            }
+            
             var hardDropTimePass = Time.time - _hardDropStartTime;
             
             // todo : directly using deltaTime is not accurate for calculate or rendering piece position
@@ -314,12 +330,12 @@ namespace Lumines
             // old calculate way
             // var targetPosY = _boardField.PieceSpawnPos - frameMoveDistance;
             var targetPosY = transform.localPosition.y - frameMoveDistance;
-            transform.localPosition = new Vector3(_gridPos.x, targetPosY, 0);
+            transform.localPosition = new Vector3(_gridPieceCenterPos.x, targetPosY, 0);
             
-            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(targetPosY));
+            _gridPieceCenterPos = new Vector2Int(_gridPieceCenterPos.x, Mathf.RoundToInt(targetPosY));
 
             // check the piece is touch something then directly lock the piece
-            var result = _boardField.CheckIsTherePieceUnderThePiece(this);
+            var result = _boardField.CheckIsThereBlockUnderThePiece(this);
             Debug.Log(result);
             if (result)
             {
@@ -338,7 +354,7 @@ namespace Lumines
             }
             
             // check the piece is touch something and start counting the lock delay
-            var reachGround = _boardField.CheckPieceIsTouchedGround(transform.localPosition);
+            var reachGround = _boardField.CheckIsThereBlockUnderThePiece(this);
             if (reachGround)
             {
                 // already reach the ground, set piece into right ground position
@@ -346,6 +362,7 @@ namespace Lumines
                 return;
             }
             
+            // start gravity drop down check
             var timePassSinceSpawn = Time.time - _spawnTime;
             if (timePassSinceSpawn < _gravityDelay)
             {
@@ -358,10 +375,16 @@ namespace Lumines
             transform.localPosition = new Vector3(transform.localPosition.x, targetPosY, 0);
             
             // todo : Mathf.RoundToInt is not good check for update grid pos, update this later
-            _gridPos = new Vector2Int(_gridPos.x, Mathf.CeilToInt(targetPosY));
+            _gridPieceCenterPos = new Vector2Int(_gridPieceCenterPos.x, Mathf.CeilToInt(targetPosY));
             
-            Debug.Log("Gravity" + _gridPos);
+            // Debug.Log("Gravity" + _gridPos);
             
+            var reachGroundThisFrame = _boardField.CheckIsThereBlockUnderThePiece(this);
+            if (reachGroundThisFrame)
+            {
+                // TODO : Maybe not accurate set in this phase
+                StartCountingLockPiece();
+            }
         }
 
         private void StartCountingLockPiece()
@@ -371,7 +394,18 @@ namespace Lumines
 
         private void UpdateTimerToLockPiece()
         {
+            if (_isLocked || _lockStartCountingTime < 0f)
+            {
+                return;
+            }
             
+            var timePassed = Time.time - _lockStartCountingTime;
+            if (timePassed < _lockDelay)
+            {
+                return;
+            }
+
+            LockPiece();
         }
         
         /// <summary>
@@ -380,6 +414,8 @@ namespace Lumines
         /// </summary>
         private void LockPiece()
         {
+            _isLocked = true;
+            
             _isHardDropping = false;
             _isDasMoving = false;
             _isHorizontalMoving = false;
@@ -390,6 +426,8 @@ namespace Lumines
             
             // split piece block
             SplitPieceBlock();
+
+            OnPieceLocked?.Invoke(this);
         }
         
         /// <summary>
@@ -398,13 +436,21 @@ namespace Lumines
         private void SplitPieceBlock()
         {
             // reverse iteration and detach the block inside the piece
-            for (var i = _pieceBlockList.Count - 1; i >= 0 ; i--)
+            for (var i = 0; i < _pieceBlockList.Count; i++)
             {
                 var block = _pieceBlockList[i];
                 block.transform.SetParent(_boardField.PieceContainer, true);
+                var localGridPosY = i / 2;
+                var localGridPosX = i % 2;
+                var localGridPos = new Vector2Int(localGridPosX, localGridPosY);
+                var targetPos =
+                    _gridPieceCenterPos - Vector2Int.one + localGridPos;
+                Debug.Log($"{_gridPieceCenterPos} | {localGridPos}");
+                block.SetGridPos(targetPos);
                 block.StartFreeFall();
-                _pieceBlockList.RemoveAt(i);
             }
+            
+            _pieceBlockList.Clear();
         }
 
         public void StartDas(int direction)
@@ -432,8 +478,8 @@ namespace Lumines
         {
             if (!_isDasMoving)
             {
-
-                var targetPosX = Mathf.Lerp(transform.localPosition.x, _gridPos.x, moveSmoothValue);
+                // rough smooth movement
+                var targetPosX = Mathf.Lerp(transform.localPosition.x, _gridPieceCenterPos.x, moveSmoothValue);
                 transform.localPosition = new Vector3(targetPosX, transform.localPosition.y, 0);
                 
                 return;
@@ -449,17 +495,17 @@ namespace Lumines
                 _dasMoveCount++;
                 
                 // calculate piece position by deltaDas value
-                var targetPosX = _gridPos.x + _dasMoveCount * _dasDirection;
-                var clampPos = _boardField.ClampPieceHorizontalPosition(new Vector2Int(targetPosX, _gridPos.y));
+                var targetPosX = _gridPieceCenterPos.x + _dasMoveCount * _dasDirection;
+                var clampPos = _boardField.ClampPieceHorizontalPosition(new Vector2Int(targetPosX, _gridPieceCenterPos.y));
                 
-                // todo : currently its not smooth right now, we will do it in future lol
+                // step moving solution: currently its not smooth right now, we will do it in future lol
                 // transform.localPosition = new Vector3(clampPos.x, clampPos.y, 0);
 
-                _gridPos = clampPos;
+                _gridPieceCenterPos = clampPos;
             }
             
-            // update piece move while DASing
-            var finalPosX = Mathf.Lerp(transform.localPosition.x, _gridPos.x, moveSmoothValue);
+            // rough smooth update piece move while DASing
+            var finalPosX = Mathf.Lerp(transform.localPosition.x, _gridPieceCenterPos.x, moveSmoothValue);
             transform.localPosition = new Vector3(finalPosX, transform.localPosition.y, 0);
         }
 

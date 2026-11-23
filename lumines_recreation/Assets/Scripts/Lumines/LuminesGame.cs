@@ -85,6 +85,8 @@ namespace Lumines
         {
             Debug.Log($"Move - {axis}");
             
+            // TODO : ignore horizontal input
+            
             // controller noise prevent
             if (Mathf.Abs(axis.sqrMagnitude) < _controllerInputThreshold * _controllerInputThreshold)
             {
@@ -138,7 +140,7 @@ namespace Lumines
             // Check current time is enough for DAS movement
             if (Time.time - _lastMoveInputEnterTime <= dasBuffer)
             {
-                Debug.LogError(interval);
+                // Debug.LogError(interval);
                 return;
             }
 
@@ -210,6 +212,8 @@ namespace Lumines
             _currentPiece.transform.position = boardField.PieceSpawnPosition;
             _currentPiece.transform.localScale = Vector3.one;
             _currentPiece.enabled = true;
+
+            _currentPiece.OnPieceLocked += OnCurrentPieceLocked;
             
             piecePosIndicator.SetFollowedPiece(_currentPiece);
             
@@ -218,11 +222,12 @@ namespace Lumines
 
         private void OnCurrentPieceLocked(Piece piece)
         {
+            _currentPiece = null;
             GetAndSpawnPieceFromNextSequence();
-            FillTheNexPieceQueue();
+            FillTheNextPieceQueue();
         }
 
-        private void FillTheNexPieceQueue()
+        private void FillTheNextPieceQueue()
         {
             
         }
