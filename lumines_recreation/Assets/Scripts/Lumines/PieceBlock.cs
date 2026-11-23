@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Lumines
 {
     /// <summary>
-    /// Piece block which split piece when it is dropping on the field 
+    /// Piece block which split piece when it is dropping on the field
     /// </summary>
     public class PieceBlock : MonoBehaviour
     {
@@ -16,8 +16,11 @@ namespace Lumines
 
         // the block drop down when the blocks under this block are clear
         private bool _isFreeFalling;
-        // todo : maybe we don't need this
-        private bool _isHardDrop;
+
+        public void SetBoardField(BoardField boardField)
+        {
+            _boardField = boardField;
+        }
         
         public void StartFreeFall()
         {
@@ -27,16 +30,6 @@ namespace Lumines
         private void Update()
         {
             FreeFalling();
-        }
-        
-        private void HardDropping()
-        {
-            if (!_isHardDrop)
-            {
-                return;
-            }
-            
-            LockBlock();
         }
 
         private void FreeFalling()
@@ -58,7 +51,9 @@ namespace Lumines
 
         private void LockBlock()
         {
+            _isFreeFalling = false;
             
+            _boardField.PlaceBlockOnField(_gridPosition);
         }
     }
 }

@@ -36,8 +36,7 @@ namespace Lumines
 
         private void InitGame()
         {
-            _currentPiece = SpawnPiece();
-            _currentPiece.transform.position = boardField.PieceSpawnPosition;
+            GameStart();
         }
 
         private void Update()
@@ -52,6 +51,23 @@ namespace Lumines
             inputHandler.MovePiece += OnMovePiece;
             inputHandler.RotateCw += OnRotateCw;
             inputHandler.RotateCcw += OnRotateCcw;
+            inputHandler.HardDrop += OnHardDrop;
+        }
+
+        private void OnHardDrop()
+        {
+            // check and let current piece starting hard drop
+            if (_currentPiece == null)
+            {
+                return;
+            }
+
+            if (_currentPiece.IsHardDropping)
+            {
+                return;
+            }
+
+            _currentPiece.StartHardDropping();
         }
 
         private void OnRotateCcw()
@@ -180,20 +196,26 @@ namespace Lumines
 
         #region Piece Management
 
-        private Piece SpawnPiece()
+        private Piece GetAndSpawnPieceFromNextSequence()
         {
             // var piece = Instantiate(piecePrefab, boardField.PieceContainer, true);
             // piece.Init(boardField);
 
             var piece = nextPiecePreviewSequence.EnqueueAndSupplementTailPieceInSequence();
-            
             piece.transform.position = boardField.PieceSpawnPosition;
+            
+            _currentPiece = piece;
+            _currentPiece.transform.SetParent(boardField.PieceContainer);
+            _currentPiece.transform.position = boardField.PieceSpawnPosition;
+            _currentPiece.transform.localScale = Vector3.one;
+            _currentPiece.enabled = true;
+            
             return piece;
         }
 
         private void OnCurrentPieceLocked(Piece piece)
         {
-            SpawnPiece();
+            GetAndSpawnPieceFromNextSequence();
             FillTheNexPieceQueue();
         }
 
@@ -214,11 +236,10 @@ namespace Lumines
             nextPiecePreviewSequence.FillThePreviewSequence();
             
             // take one and set to current piece
-            var startPiece = nextPiecePreviewSequence.EnqueueAndSupplementTailPieceInSequence();
-            _currentPiece = startPiece;
-            
+            GetAndSpawnPieceFromNextSequence();
+
             // reset some visual effects
-            
+
             // all done!!
         }
         

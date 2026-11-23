@@ -28,14 +28,14 @@ namespace Lumines
         
         [Header("Dropdown")]
         public float gravityDropDurationPerTile = 1f;
-        public float hardDropDurationPerTile = 0.15f;
+        public float hardDropDurationPerTile = 0.015f;
         
         // Piece type
         private readonly byte[,] piece = new byte[2, 2];
         
         private readonly Vector2 rotateCenter = new Vector2(0.5f, 0.5f);
 
-        private List<PieceBlock> _pieceBlockList;
+        [SerializeField] private List<PieceBlock> _pieceBlockList;
         
         // base data
         private byte _pieceByte;
@@ -43,13 +43,14 @@ namespace Lumines
         // use center position, range is [0, 20]
         // standard spawn pos is (8, 11)
         private Vector2Int _gridPos;
+        private Vector2 _continuePos;
 
         // Piece spawn time
         private float _spawnTime;
         // gravity and delay setting
         private float _gravity;
         // delay duration
-        private float _gravityDelay;
+        [SerializeField] private float _gravityDelay = 0.5f;
         // piece landed and start counting lock delay 
         private float _lockStartTime;
         // land delay before locked
@@ -69,6 +70,7 @@ namespace Lumines
 
         private float _lastRotateTime;
 
+        public Vector2Int GridPos => _gridPos;
         public bool IsHorizontalMoving => _isHorizontalMoving;
         public bool IsHardDropping => _isHardDropping;
         public bool IsRotating => _isRotating;
@@ -91,6 +93,15 @@ namespace Lumines
         private void Awake()
         {
             visual = GetComponent<PieceVisual>();
+
+            if (_pieceBlockList == null)
+            {
+                _pieceBlockList = new List<PieceBlock>();
+            }
+            _pieceBlockList.Clear();
+
+            var pieceBlocks = GetComponentsInChildren<PieceBlock>();
+            _pieceBlockList.AddRange(pieceBlocks);
         }
 
         /// <summary>
@@ -111,6 +122,13 @@ namespace Lumines
             _rotateCount = 0;
 
             _gridPos = new Vector2Int(8, 11);
+            
+            foreach (var pieceBlock in _pieceBlockList)
+            {
+                pieceBlock.SetBoardField(_boardField);
+            }
+            
+            visual.Init();
         }
 
         public void TryRotate(bool ccw)
@@ -200,7 +218,7 @@ namespace Lumines
             // Debug.Log($"MoveLeft");
 
             _gridPos = targetGridPos;
-            Move(true);
+            MoveHorizontally(true);
         }
         
         public void MoveRight()
@@ -220,11 +238,11 @@ namespace Lumines
             // Debug.Log($"MoveRight");
 
             _gridPos = targetGridPos;
-            Move(false);
+            MoveHorizontally(false);
         }
 
         [Button]
-        private void Move(bool isLeft)
+        private void MoveHorizontally(bool isLeft)
         {
             // can't move when hard drop
             if (_isHardDropping)
@@ -238,7 +256,7 @@ namespace Lumines
             var targetPos = new Vector3(_gridPos.x, _gridPos.y, 0);
             
             var tween =
-                transform.DOLocalMove(targetPos, normalMoveDuration);
+                transform.DOLocalMoveX(targetPos.x, normalMoveDuration);
             if (useAnimCurve)
             {
                 tween.SetEase(moveAnimCurve);
@@ -267,6 +285,8 @@ namespace Lumines
         
         private void Update()
         {
+            UpdateHardDropDown();
+            
             GravityDropDown();
             SmoothDasMove();
         }
@@ -283,16 +303,21 @@ namespace Lumines
             }
             
             var hardDropTimePass = Time.time - _hardDropStartTime;
-            var frameMoveDistance = hardDropTimePass / hardDropDurationPerTile;
             
-            var targetPosY = _boardField.PieceSpawnPos - frameMoveDistance;
+            // todo : directly using deltaTime is not accurate for calculate or rendering piece position
+            //          check this later, so as the gravity move down
+            var frameMoveDistance = Time.deltaTime / hardDropDurationPerTile;
+            
+            // old calculate way
+            // var targetPosY = _boardField.PieceSpawnPos - frameMoveDistance;
+            var targetPosY = transform.localPosition.y - frameMoveDistance;
             transform.localPosition = new Vector3(_gridPos.x, targetPosY, 0);
             
-            // todo : Mathf.RoundToInt is not good check for update grid pos, update this later
-            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(_gridPos.y));
+            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(targetPosY));
 
             // check the piece is touch something then directly lock the piece
-            var result = _boardField.CheckPieceIsTouchSomethingBottom(this);
+            var result = _boardField.CheckIsTherePieceUnderThePiece(this);
+            Debug.Log(result);
             if (result)
             {
                 LockPiece();
@@ -315,12 +340,13 @@ namespace Lumines
                 return;
             }
 
-            var fallingTiles = timePassWhenSpawn / gravityDropDurationPerTile;
-            var targetPosY = _boardField.PieceSpawnPos - fallingTiles;
+            var deltaFallingTiles = Time.deltaTime / gravityDropDurationPerTile;
+            // var targetPosY = _boardField.PieceSpawnPos - fallingTiles;
+            var targetPosY = transform.localPosition.y - deltaFallingTiles;
             transform.localPosition = new Vector3(_gridPos.x, targetPosY, 0);
             
             // todo : Mathf.RoundToInt is not good check for update grid pos, update this later
-            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(_gridPos.y));
+            _gridPos = new Vector2Int(_gridPos.x, Mathf.RoundToInt(targetPosY));
             
             // check the piece is touch something and start counting the lock delay
         }
@@ -341,8 +367,15 @@ namespace Lumines
         /// </summary>
         private void LockPiece()
         {
+            _isHardDropping = false;
+            _isDasMoving = false;
+            _isHorizontalMoving = false;
+            _isRotating = false;
+            _isGravityDropping = false;
             
+            // _isLanded = true;
             
+            // split piece block
             SplitPieceBlock();
         }
         

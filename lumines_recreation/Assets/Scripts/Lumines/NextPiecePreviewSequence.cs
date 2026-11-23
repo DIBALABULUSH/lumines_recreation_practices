@@ -21,7 +21,7 @@ namespace Lumines
         public float topPieceOffsetY = 0f;
         public float scaleFromTopToBottom = 0.9f;
         public AnimationCurve scaleCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
-        public float piecePadding;
+        public float piecePadding = 2.2f;
 
         private Queue<Piece> _previewQueue = new Queue<Piece>();
 
@@ -51,6 +51,7 @@ namespace Lumines
             
             var newPiece = Instantiate(piecePrefab, pieceRoot);
             newPiece.Init(boardField, byteValue);
+            newPiece.enabled = false;
             
             return newPiece;
         }
@@ -85,9 +86,8 @@ namespace Lumines
             var order = 0;
             foreach (var piece in _previewQueue)
             {
-                var targetPosY = topPieceOffsetY + order * piecePadding;
-                piece.transform.localPosition =
-                    new Vector3(piece.transform.localPosition.x, targetPosY, piece.transform.localPosition.z);
+                var targetPosY = topPieceOffsetY - order * piecePadding;
+                piece.transform.localPosition = new Vector3(0f, targetPosY, 0f);
                 
                 var ratio = order / (float)maxPreviewCount;
                 var scale = scaleCurve.Evaluate(ratio);

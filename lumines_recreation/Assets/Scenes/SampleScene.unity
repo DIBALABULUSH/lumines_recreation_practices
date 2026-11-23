@@ -505,10 +505,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8323a2033242b14094822ebc0a9b114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  piecePrefab: {fileID: 195989731324223993, guid: e10fdd80cf1628243bae3be61ab23c6a,
-    type: 3}
   boardField: {fileID: 236485829}
   inputHandler: {fileID: 714964098}
+  nextPiecePreviewSequence: {fileID: 2081341270}
   dasWindow: 0.1
   dasBuffer: 0.1
   continueMoveInterval: 0.04
@@ -1066,6 +1065,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2081341269}
+  - component: {fileID: 2081341270}
   m_Layer: 0
   m_Name: NextPieceSequence
   m_TagString: Untagged
@@ -1088,6 +1088,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 236485828}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2081341270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081341268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b0ea01af9e4337beecc1ba0d504056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  piecePrefab: {fileID: 195989731324223993, guid: e10fdd80cf1628243bae3be61ab23c6a,
+    type: 3}
+  boardField: {fileID: 236485829}
+  pieceRoot: {fileID: 2081341269}
+  maxPreviewCount: 3
+  topPieceOffsetY: 0
+  scaleFromTopToBottom: 0.9
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.8349057
+      inSlope: 0.16509432
+      outSlope: 0.16509432
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.16509432
+      outSlope: 0.16509432
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  piecePadding: 2.4
 --- !u!1001 &7816471326917585
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1154,7 +1198,7 @@ PrefabInstance:
     - target: {fileID: 4755969862464900303, guid: e10fdd80cf1628243bae3be61ab23c6a,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

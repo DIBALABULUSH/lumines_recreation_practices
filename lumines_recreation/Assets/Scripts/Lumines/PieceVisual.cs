@@ -23,14 +23,36 @@ namespace Lumines
         private Tween _rotateTween;
         
         public float RotateDuration => rotateDuration;
+
+        private int _rotateCount;
+
+        public void Init()
+        {
+            _rotateCount = 0;
+        }
         
         [Button]
         public Tween RotateAnimation(int rotate, int ccw = 1)
         {
             _rotateTween?.Kill();
+
+            var lastRotation = _rotateCount * rotateAnglePerStep;
+            var targetRotation = lastRotation + ccw * rotateAnglePerStep;
+            Debug.Log(targetRotation + " | " + targetRotation);
+
+            _rotateCount = rotate;
             
-            var tween = 
-                rotateRoot.DORotate(rotate * ccw * rotateAnglePerStep, rotateDuration, RotateMode.FastBeyond360)
+            var tween = DOTween.To(
+                    () => lastRotation.z,
+                    value =>
+                    {
+                        lastRotation.z = value;
+                        rotateRoot.localRotation =
+                            Quaternion.Euler(0f, 0f, value);
+                        
+                        Debug.Log(rotateRoot.localRotation + " | " + value);
+                    },
+                    targetRotation.z, rotateDuration)
                 .SetEase(rotateCurve);
             
             _rotateTween = tween;

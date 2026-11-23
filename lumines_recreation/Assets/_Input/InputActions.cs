@@ -85,218 +85,218 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public @InputActions()
     {
         asset = InputActionAsset.FromJson(@"{
-  ""version"": 1,
-  ""name"": ""InputActions"",
-  ""maps"": [
-    {
-      ""name"": ""LuminesStandard"",
-      ""id"": ""74e3e469-d160-4bec-a42a-23324430dbd5"",
-      ""actions"": [
+    ""version"": 1,
+    ""name"": ""InputActions"",
+    ""maps"": [
         {
-          ""name"": ""MovePiece"",
-          ""type"": ""Value"",
-          ""id"": ""f1eb72ff-d16a-47ce-bc20-8b906d37f984"",
-          ""expectedControlType"": ""Vector2"",
-          ""processors"": """",
-          ""interactions"": """",
-          ""initialStateCheck"": true
-        },
-        {
-          ""name"": ""RotateCw"",
-          ""type"": ""Button"",
-          ""id"": ""37ec93d1-475c-466f-aa9c-c1cf52633053"",
-          ""expectedControlType"": ""Button"",
-          ""processors"": """",
-          ""interactions"": ""Press(behavior=0)"",
-          ""initialStateCheck"": false
-        },
-        {
-          ""name"": ""RotateCcw"",
-          ""type"": ""Button"",
-          ""id"": ""d2b4a9b3-0799-4d5d-90b3-0574022b4a04"",
-          ""expectedControlType"": ""Button"",
-          ""processors"": """",
-          ""interactions"": ""Press(behavior=0)"",
-          ""initialStateCheck"": false
-        },
-        {
-          ""name"": ""SoftDrop"",
-          ""type"": ""Button"",
-          ""id"": ""d4a05c4c-06d3-4b09-9c6f-127206da5a8e"",
-          ""expectedControlType"": ""Button"",
-          ""processors"": """",
-          ""interactions"": ""Press(behavior=0)"",
-          ""initialStateCheck"": false
-        },
-        {
-          ""name"": ""HardDrop"",
-          ""type"": ""Button"",
-          ""id"": ""3ff84144-5ac9-4fce-8eb5-7c5d2d83986a"",
-          ""expectedControlType"": ""Button"",
-          ""processors"": """",
-          ""interactions"": ""Press(behavior=0)"",
-          ""initialStateCheck"": false
+            ""name"": ""LuminesStandard"",
+            ""id"": ""74e3e469-d160-4bec-a42a-23324430dbd5"",
+            ""actions"": [
+                {
+                    ""name"": ""MovePiece"",
+                    ""type"": ""Value"",
+                    ""id"": ""f1eb72ff-d16a-47ce-bc20-8b906d37f984"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RotateCw"",
+                    ""type"": ""Button"",
+                    ""id"": ""37ec93d1-475c-466f-aa9c-c1cf52633053"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=0)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateCcw"",
+                    ""type"": ""Button"",
+                    ""id"": ""d2b4a9b3-0799-4d5d-90b3-0574022b4a04"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=0)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SoftDrop"",
+                    ""type"": ""Button"",
+                    ""id"": ""d4a05c4c-06d3-4b09-9c6f-127206da5a8e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=0)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HardDrop"",
+                    ""type"": ""Button"",
+                    ""id"": ""3ff84144-5ac9-4fce-8eb5-7c5d2d83986a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=0)"",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""939ceaea-9aeb-4e51-ae1a-b8aa3c903905"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5f08dff5-e5d7-45b9-b5f5-033f059b284c"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a668ea3b-23af-4189-9fa6-8240821171c5"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCcw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ddaa0421-91d1-4ffd-99c0-118304b0b9dd"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SoftDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2a4936f1-0abf-4e13-8029-beaf32297563"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HardDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WASD"",
+                    ""id"": ""9f88b6f2-4101-4244-8c09-abade2fe96c1"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""7d8abc4f-390a-49ca-8e53-02dde8b3ddee"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""3e2122ca-a2c5-458a-a9b7-a184bc82db4f"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""41abc6bb-51b4-499b-ae9a-96e7f26d2090"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""549eb1b7-f543-4ece-b419-ab4ca026afc0"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b136d81-6b78-4f88-8b73-b0282a79b8af"",
+                    ""path"": ""<Keyboard>/l"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e70068a5-16b5-4f51-9ff4-d3e4a0759c33"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCcw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ac06fa1-59d1-4722-b636-9ecbfdc54c94"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SoftDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb00080c-c8fe-4729-8ec4-fe25404ac6b4"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HardDrop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
-      ],
-      ""bindings"": [
-        {
-          ""name"": """",
-          ""id"": ""939ceaea-9aeb-4e51-ae1a-b8aa3c903905"",
-          ""path"": ""<Gamepad>/leftStick"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""MovePiece"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""5f08dff5-e5d7-45b9-b5f5-033f059b284c"",
-          ""path"": ""<Gamepad>/buttonEast"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""RotateCw"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""a668ea3b-23af-4189-9fa6-8240821171c5"",
-          ""path"": ""<Gamepad>/buttonSouth"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""RotateCcw"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""ddaa0421-91d1-4ffd-99c0-118304b0b9dd"",
-          ""path"": ""<Gamepad>/rightShoulder"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""SoftDrop"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""2a4936f1-0abf-4e13-8029-beaf32297563"",
-          ""path"": ""<Gamepad>/leftShoulder"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""HardDrop"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": ""WASD"",
-          ""id"": ""9f88b6f2-4101-4244-8c09-abade2fe96c1"",
-          ""path"": ""2DVector"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""MovePiece"",
-          ""isComposite"": true,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": ""up"",
-          ""id"": ""7d8abc4f-390a-49ca-8e53-02dde8b3ddee"",
-          ""path"": ""<Keyboard>/w"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""MovePiece"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": true
-        },
-        {
-          ""name"": ""down"",
-          ""id"": ""3e2122ca-a2c5-458a-a9b7-a184bc82db4f"",
-          ""path"": ""<Keyboard>/s"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""MovePiece"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": true
-        },
-        {
-          ""name"": ""left"",
-          ""id"": ""41abc6bb-51b4-499b-ae9a-96e7f26d2090"",
-          ""path"": ""<Keyboard>/a"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""MovePiece"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": true
-        },
-        {
-          ""name"": ""right"",
-          ""id"": ""549eb1b7-f543-4ece-b419-ab4ca026afc0"",
-          ""path"": ""<Keyboard>/d"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""MovePiece"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": true
-        },
-        {
-          ""name"": """",
-          ""id"": ""3b136d81-6b78-4f88-8b73-b0282a79b8af"",
-          ""path"": ""<Keyboard>/l"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""RotateCw"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""e70068a5-16b5-4f51-9ff4-d3e4a0759c33"",
-          ""path"": ""<Keyboard>/j"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""RotateCcw"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""5ac06fa1-59d1-4722-b636-9ecbfdc54c94"",
-          ""path"": ""<Keyboard>/s"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""SoftDrop"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        },
-        {
-          ""name"": """",
-          ""id"": ""eb00080c-c8fe-4729-8ec4-fe25404ac6b4"",
-          ""path"": ""<Keyboard>/space"",
-          ""interactions"": """",
-          ""processors"": """",
-          ""groups"": """",
-          ""action"": ""HardDrop"",
-          ""isComposite"": false,
-          ""isPartOfComposite"": false
-        }
-      ]
-    }
-  ],
-  ""controlSchemes"": []
+    ],
+    ""controlSchemes"": []
 }");
         // LuminesStandard
         m_LuminesStandard = asset.FindActionMap("LuminesStandard", throwIfNotFound: true);
