@@ -46,6 +46,24 @@ namespace Lumines
             } 
         }
 
+        public void ClearBoard()
+        {
+            for (var i = 0; i < _pieceBlockListArray.Length; i++)
+            {
+                var pieceBlockList = _pieceBlockListArray[i];
+                for (var j = 0; j < pieceBlockList.Count; j++)
+                {
+                    var piece = pieceBlockList[j];
+                    if (piece == null)
+                    {
+                        continue;
+                    }
+                    Destroy(piece.gameObject);
+                    pieceBlockList[j] = null;
+                }
+            } 
+        }
+        
         public bool PlaceBlockOnField(PieceBlock block, Vector2Int gridPos)
         {
             var col = gridPos.x;
@@ -93,7 +111,7 @@ namespace Lumines
             return new Vector2Int(x, piecePos.y);
         }
 
-        public int GetBoardFieldColumnTopEmptyPosition(int col)
+        public int GetColumnTopEmptyGridPosition(int col)
         {
             // out array bound check
             if (col < 0 || col >= _pieceBlockListArray.Length)
@@ -128,8 +146,8 @@ namespace Lumines
             // check piece bottom block is touch other blocks on the board field
             var pieceBottomBlockPosY = piece.transform.localPosition.y;
             // grid piece center pos is [1, 15], minus 1 to get the 0 position grid block
-            var leftColTop = GetBoardFieldColumnTopEmptyPosition(piece.GridPieceCenterPos.x - 1);
-            var rightColTop = GetBoardFieldColumnTopEmptyPosition(piece.GridPieceCenterPos.x);
+            var leftColTop = GetColumnTopEmptyGridPosition(piece.GridPieceCenterPos.x - 1);
+            var rightColTop = GetColumnTopEmptyGridPosition(piece.GridPieceCenterPos.x);
             
             if (pieceBottomBlockPosY - leftColTop <= 1 || pieceBottomBlockPosY - rightColTop <= 1)
             {

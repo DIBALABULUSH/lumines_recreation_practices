@@ -53,7 +53,9 @@ namespace Lumines
         private Vector2Int _gridPieceCenterPos;
 
         // Piece spawn time
-        private float _spawnTime;
+        private float _spawnTime = -1f;
+        // Piece picked by game system
+        private float _pickUpTime = -1f;
         // gravity and delay setting
         private float _gravity;
         // delay duration
@@ -150,7 +152,12 @@ namespace Lumines
             
             visual.Init();
         }
-
+        
+        public void PickUp()
+        {
+            _pickUpTime = Time.time;
+        }
+        
         public void TryRotate(bool ccw)
         {
             var rotateColdDown = Time.time - _lastRotateTime < rotateDuration;
@@ -369,7 +376,7 @@ namespace Lumines
             _lockStartCountingTime = -1f;
             
             // start gravity drop down check
-            var timePassSinceSpawn = Time.time - _spawnTime;
+            var timePassSinceSpawn = Time.time - _pickUpTime;
             if (timePassSinceSpawn < _gravityDelay)
             {
                 return;
@@ -548,6 +555,5 @@ namespace Lumines
         }
 
         #endregion
-        
     }
 }

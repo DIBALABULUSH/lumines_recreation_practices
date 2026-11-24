@@ -53,6 +53,13 @@ namespace Lumines
             inputHandler.RotateCw += OnRotateCw;
             inputHandler.RotateCcw += OnRotateCcw;
             inputHandler.HardDrop += OnHardDrop;
+
+            inputHandler.ResetGame += OnResetGame;
+        }
+
+        private void OnResetGame()
+        { 
+            boardField.ClearBoard();
         }
 
         private void OnHardDrop()
@@ -222,6 +229,8 @@ namespace Lumines
             _currentPiece.transform.position = boardField.PieceSpawnPosition;
             _currentPiece.transform.localScale = Vector3.one;
             _currentPiece.enabled = true;
+
+            _currentPiece.PickUp();
 
             _currentPiece.OnPieceLocked += OnCurrentPieceLocked;
             

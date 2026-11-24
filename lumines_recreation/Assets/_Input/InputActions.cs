@@ -172,6 +172,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=0)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ResetGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""70952682-f68f-42ce-ae03-13c6b5a28fdb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -372,6 +381,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""HardDrop"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6fb588c3-1b7b-4c43-bbd5-8bf2569ec216"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResetGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -389,6 +409,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_LuminesStandard_RotateCcw = m_LuminesStandard.FindAction("RotateCcw", throwIfNotFound: true);
         m_LuminesStandard_SoftDrop = m_LuminesStandard.FindAction("SoftDrop", throwIfNotFound: true);
         m_LuminesStandard_HardDrop = m_LuminesStandard.FindAction("HardDrop", throwIfNotFound: true);
+        m_LuminesStandard_ResetGame = m_LuminesStandard.FindAction("ResetGame", throwIfNotFound: true);
     }
 
     ~@InputActions()
@@ -478,6 +499,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_LuminesStandard_RotateCcw;
     private readonly InputAction m_LuminesStandard_SoftDrop;
     private readonly InputAction m_LuminesStandard_HardDrop;
+    private readonly InputAction m_LuminesStandard_ResetGame;
     /// <summary>
     /// Provides access to input actions defined in input action map "LuminesStandard".
     /// </summary>
@@ -525,6 +547,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "LuminesStandard/HardDrop".
         /// </summary>
         public InputAction @HardDrop => m_Wrapper.m_LuminesStandard_HardDrop;
+        /// <summary>
+        /// Provides access to the underlying input action "LuminesStandard/ResetGame".
+        /// </summary>
+        public InputAction @ResetGame => m_Wrapper.m_LuminesStandard_ResetGame;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -578,6 +604,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @HardDrop.started += instance.OnHardDrop;
             @HardDrop.performed += instance.OnHardDrop;
             @HardDrop.canceled += instance.OnHardDrop;
+            @ResetGame.started += instance.OnResetGame;
+            @ResetGame.performed += instance.OnResetGame;
+            @ResetGame.canceled += instance.OnResetGame;
         }
 
         /// <summary>
@@ -616,6 +645,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @HardDrop.started -= instance.OnHardDrop;
             @HardDrop.performed -= instance.OnHardDrop;
             @HardDrop.canceled -= instance.OnHardDrop;
+            @ResetGame.started -= instance.OnResetGame;
+            @ResetGame.performed -= instance.OnResetGame;
+            @ResetGame.canceled -= instance.OnResetGame;
         }
 
         /// <summary>
@@ -719,5 +751,12 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnHardDrop(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ResetGame" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnResetGame(InputAction.CallbackContext context);
     }
 }

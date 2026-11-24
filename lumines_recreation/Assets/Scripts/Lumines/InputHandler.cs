@@ -11,6 +11,7 @@ namespace Lumines
         public event Action RotateCcw;
         public event Action SoftDrop;
         public event Action HardDrop;
+        public event Action ResetGame;
 
         public Vector2 MoveInput { get; private set; }
 
@@ -87,6 +88,12 @@ namespace Lumines
         {
             if (context.performed)
                 HardDrop?.Invoke();
+        }
+
+        public void OnResetGame(InputAction.CallbackContext context)
+        {
+            if(context.performed)
+                ResetGame?.Invoke();
         }
     }
 }

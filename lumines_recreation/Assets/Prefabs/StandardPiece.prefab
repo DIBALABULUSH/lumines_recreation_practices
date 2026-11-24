@@ -114,6 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visual: {fileID: 6136043062110825719}
+  pieceSize: {x: 2, y: 2}
   dasMoveDurationPerTile: 0.04
   normalMoveDuration: 0.12
   moveSmoothValue: 0.12
@@ -150,8 +151,8 @@ MonoBehaviour:
   - {fileID: 5423107788382581938}
   - {fileID: 3862571396660311111}
   - {fileID: 7419727489350623409}
-  _gravityDelay: 0.5
-  _lockDelay: 0.15
+  _gravityDelay: 1
+  _lockDelay: 0.3
   rotateDuration: 0.2
 --- !u!114 &6136043062110825719
 MonoBehaviour:
