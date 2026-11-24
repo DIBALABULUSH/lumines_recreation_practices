@@ -358,9 +358,14 @@ namespace Lumines
             if (reachGround)
             {
                 // already reach the ground, set piece into right ground position
-                transform.localPosition = new Vector3(transform.localPosition.x, 1f, 0);
+                // TOdo : comment this because we need to wait the lock delay to set up the piece
+                //      now we just don't continue move down
+                // transform.localPosition = new Vector3(transform.localPosition.x, 1f, 0);
                 return;
             }
+
+            // reset lock counter when drop down by gravity
+            _lockStartCountingTime = -1f;
             
             // start gravity drop down check
             var timePassSinceSpawn = Time.time - _spawnTime;
@@ -390,6 +395,7 @@ namespace Lumines
         private void StartCountingLockPiece()
         {
             _lockStartCountingTime = Time.time;
+            Debug.LogWarning("StartCountingLockPiece");
         }
 
         private void UpdateTimerToLockPiece()
@@ -402,6 +408,7 @@ namespace Lumines
             var timePassed = Time.time - _lockStartCountingTime;
             if (timePassed < _lockDelay)
             {
+                // Debug.LogError("counting lock delay");
                 return;
             }
 
@@ -445,9 +452,12 @@ namespace Lumines
                 var localGridPos = new Vector2Int(localGridPosX, localGridPosY);
                 var targetPos =
                     _gridPieceCenterPos - Vector2Int.one + localGridPos;
-                Debug.Log($"{_gridPieceCenterPos} | {localGridPos}");
-                block.SetGridPos(targetPos);
+                // Debug.Log($"{_gridPieceCenterPos} | {localGridPos}");
+                
+                // well start free fall must be executed earlier than set grid pos
+                // otherwise the boolean will be reset back to start and execute one more Update()
                 block.StartFreeFall();
+                block.SetGridPos(targetPos);
             }
             
             _pieceBlockList.Clear();

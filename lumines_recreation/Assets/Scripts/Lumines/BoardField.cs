@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.Utilities;
+using Tools;
 using UnityEngine;
 
 namespace Lumines
@@ -23,6 +24,9 @@ namespace Lumines
         public Transform PieceContainer => pieceContainer;
 
         public float PieceSpawnPos => 11f;
+        // toDO : use some config
+        public int BoardWidth => 16;
+        public int BoardHeight => 10;
 
         private void Awake()
         {
@@ -62,13 +66,13 @@ namespace Lumines
             var targetBlock = blockList[row];
             if (targetBlock == null)
             {
-                Debug.Log($"Place block on {gridPos}");
-                blockList[row] = block;
+                D.Info($"Place block on {gridPos}", Color.green);
+                _pieceBlockListArray[col][row] = block;
                 return true;
             }
             else
             { 
-                Debug.LogWarning("Target position already have an existing block");
+                Debug.LogWarning($"Target position {gridPos} already have an existing block");
                 return false;
             }
         }
@@ -122,7 +126,8 @@ namespace Lumines
             
             
             // check piece bottom block is touch other blocks on the board field
-            var pieceBottomBlockPosY = piece.transform.localPosition.y - 1;
+            var pieceBottomBlockPosY = piece.transform.localPosition.y;
+            // grid piece center pos is [1, 15], minus 1 to get the 0 position grid block
             var leftColTop = GetBoardFieldColumnTopEmptyPosition(piece.GridPieceCenterPos.x - 1);
             var rightColTop = GetBoardFieldColumnTopEmptyPosition(piece.GridPieceCenterPos.x);
             
@@ -138,6 +143,33 @@ namespace Lumines
             }
             
             return false;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (_pieceBlockListArray == null)
+            {
+                return;
+            }
+            
+            for (int x = 0; x < _pieceBlockListArray.Length; x++)
+            {
+                var blockList = _pieceBlockListArray[x];
+                for (int y = 0; y < blockList.Count; y++)
+                {
+                    var block = blockList[y];
+                    if (block == null)
+                    {
+                        Gizmos.color = Color.red;
+                        var pos = new Vector3(x, y) + Vector3.one * 0.5f - new Vector3(8, 5, 2f);
+                        Gizmos.DrawCube(pos, Vector3.one * 0.3f);
+                        continue;
+                    }
+                    
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawCube(block.transform.position - Vector3.forward * 2f, Vector3.one * 0.3f);
+                }
+            }
         }
     }
 }

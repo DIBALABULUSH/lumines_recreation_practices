@@ -29,10 +29,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6130492999118881369}
-  - {fileID: 4270193758597253486}
   - {fileID: 4632174151323695288}
   - {fileID: 7625722576789324946}
+  - {fileID: 6130492999118881369}
+  - {fileID: 4270193758597253486}
   m_Father: {fileID: 1784167097202532935}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1907629959477195531
@@ -45,7 +45,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4270193758597253486}
   m_Layer: 0
-  m_Name: 01
+  m_Name: 11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,15 +143,15 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  gravityDropDurationPerTile: 1
+  gravityDropDurationPerTile: 0.5
   hardDropDurationPerTile: 0.015
   _pieceBlockList:
-  - {fileID: 3862571396660311111}
-  - {fileID: 7419727489350623409}
   - {fileID: 6147886936500922571}
   - {fileID: 5423107788382581938}
+  - {fileID: 3862571396660311111}
+  - {fileID: 7419727489350623409}
   _gravityDelay: 0.5
-  _lockDelay: 0.1
+  _lockDelay: 0.15
   rotateDuration: 0.2
 --- !u!114 &6136043062110825719
 MonoBehaviour:
@@ -220,7 +220,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7625722576789324946}
   m_Layer: 0
-  m_Name: 11
+  m_Name: 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -252,7 +252,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6130492999118881369}
   m_Layer: 0
-  m_Name: 00
+  m_Name: 01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -284,7 +284,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4632174151323695288}
   m_Layer: 0
-  m_Name: 10
+  m_Name: 00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -367,7 +367,7 @@ PrefabInstance:
     - target: {fileID: 5199705533250169885, guid: 026803af728051a49830ae474093fff8,
         type: 3}
       propertyPath: m_Name
-      value: PieceBlockA
+      value: PieceBlockA10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -453,7 +453,7 @@ PrefabInstance:
     - target: {fileID: 5199705533250169885, guid: 026803af728051a49830ae474093fff8,
         type: 3}
       propertyPath: m_Name
-      value: PieceBlockA
+      value: PieceBlockA01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -489,7 +489,7 @@ PrefabInstance:
     - target: {fileID: 2632934417005777113, guid: 4552e444ac6ea194fbc511f973e42437,
         type: 3}
       propertyPath: m_Name
-      value: PieceBlockB
+      value: PieceBlockB11
       objectReference: {fileID: 0}
     - target: {fileID: 3936388909213801484, guid: 4552e444ac6ea194fbc511f973e42437,
         type: 3}
@@ -575,7 +575,7 @@ PrefabInstance:
     - target: {fileID: 2632934417005777113, guid: 4552e444ac6ea194fbc511f973e42437,
         type: 3}
       propertyPath: m_Name
-      value: PieceBlockB
+      value: PieceBlockB00
       objectReference: {fileID: 0}
     - target: {fileID: 3936388909213801484, guid: 4552e444ac6ea194fbc511f973e42437,
         type: 3}
