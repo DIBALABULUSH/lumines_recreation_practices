@@ -49,7 +49,7 @@ namespace Lumines
         
         private void RegisterInputEvents()
         {
-            inputHandler.MovePiece += OnMovePiece;
+            inputHandler.MovePieceAxis += MovePieceAxis;
             inputHandler.RotateCw += OnRotateCw;
             inputHandler.RotateCcw += OnRotateCcw;
             inputHandler.HardDrop += OnHardDrop;
@@ -80,15 +80,25 @@ namespace Lumines
         {
             TryRotateCwCurrentPiece();
         }
-        
-        private void OnMovePiece(Vector2 axis)
+
+        private void OnMovePieceLeft()
         {
-            Debug.Log($"Move - {axis}");
+            // MovePiece(true);
+        }
+        
+        private void OnMovePieceRight()
+        {
+            // MovePiece(false);
+        }
+        
+        private void MovePieceAxis(Vector2 axis)
+        {
+            // Debug.Log($"Move - {axis}");
             
             // TODO : ignore horizontal input
             
             // controller noise prevent
-            if (Mathf.Abs(axis.sqrMagnitude) < _controllerInputThreshold * _controllerInputThreshold)
+            if (Mathf.Abs(axis.x) < _controllerInputThreshold)
             {
                 CancelMoveInput();
                 _currentPiece?.EndDas();
@@ -97,7 +107,7 @@ namespace Lumines
 
             // if current piece is moving, then input come in
             // todo : we should handle the input buffer
-            if (_currentPiece.IsHorizontalMoving)
+            if (_currentPiece == null || _currentPiece.IsHorizontalMoving)
             {
                 // todo : move input buffer
                 Debug.Log($"Piece is Moving, Skipped");
@@ -105,7 +115,7 @@ namespace Lumines
                 return;
             }
             
-            Debug.Log($"Move Valid - {axis}");
+            // Debug.Log($"Move Valid - {axis}");
             
             // a valuable move input enter
             _isMoveInputEnter = true;

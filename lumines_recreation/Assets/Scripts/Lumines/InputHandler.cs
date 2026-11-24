@@ -6,7 +6,7 @@ namespace Lumines
 {
     public class InputHandler : MonoBehaviour, InputActions.ILuminesStandardActions
     {
-        public event Action<Vector2> MovePiece;
+        public event Action<Vector2> MovePieceAxis;
         public event Action RotateCw;
         public event Action RotateCcw;
         public event Action SoftDrop;
@@ -45,9 +45,24 @@ namespace Lumines
             if (!context.performed && !context.canceled)
                 return;
             
-            
             MoveInput = context.canceled ? Vector2.zero : context.ReadValue<Vector2>();
-            MovePiece?.Invoke(MoveInput);
+            MovePieceAxis?.Invoke(MoveInput);
+        }
+
+        public void OnMoveUp(InputAction.CallbackContext context)
+        {
+        }
+
+        public void OnMoveDown(InputAction.CallbackContext context)
+        {
+        }
+
+        public void OnMoveLeft(InputAction.CallbackContext context)
+        {
+        }
+
+        public void OnMoveRight(InputAction.CallbackContext context)
+        {
         }
 
         public void OnRotateCw(InputAction.CallbackContext context)

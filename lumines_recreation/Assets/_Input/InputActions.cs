@@ -102,6 +102,42 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""MoveUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""5a974f59-9870-42b2-8682-ff26dafb2cca"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MoveDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""caa51b7b-3a73-4462-ba43-3bcb636410b6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MoveLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5059931-2dce-40ba-8524-424bcbbfa4d2"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MoveRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""1ec974a3-c957-469f-98b2-f74f8b1ca64d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""RotateCw"",
                     ""type"": ""Button"",
                     ""id"": ""37ec93d1-475c-466f-aa9c-c1cf52633053"",
@@ -151,6 +187,61 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""7d1d3966-38c7-4b87-83d6-7cd7b94bb84b"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""890e75ca-53ec-473b-aec6-d1896c731756"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""f5331736-a295-4d6f-b4f7-4fb83746b5f9"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""1bc2263a-2d4e-4685-aff2-dd7b0b0561e7"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""5442efb6-1688-4de4-981d-e7fc9835fb2f"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MovePiece"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
                     ""name"": """",
                     ""id"": ""5f08dff5-e5d7-45b9-b5f5-033f059b284c"",
                     ""path"": ""<Gamepad>/buttonEast"",
@@ -195,59 +286,48 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""WASD"",
-                    ""id"": ""9f88b6f2-4101-4244-8c09-abade2fe96c1"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MovePiece"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
+                    ""name"": """",
                     ""id"": ""7d8abc4f-390a-49ca-8e53-02dde8b3ddee"",
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MovePiece"",
+                    ""action"": ""MoveUp"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true
+                    ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""down"",
+                    ""name"": """",
                     ""id"": ""3e2122ca-a2c5-458a-a9b7-a184bc82db4f"",
                     ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MovePiece"",
+                    ""action"": ""MoveDown"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true
+                    ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""left"",
+                    ""name"": """",
                     ""id"": ""41abc6bb-51b4-499b-ae9a-96e7f26d2090"",
                     ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MovePiece"",
+                    ""action"": ""MoveLeft"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true
+                    ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""right"",
+                    ""name"": """",
                     ""id"": ""549eb1b7-f543-4ece-b419-ab4ca026afc0"",
                     ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MovePiece"",
+                    ""action"": ""MoveRight"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": true
+                    ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
@@ -301,6 +381,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // LuminesStandard
         m_LuminesStandard = asset.FindActionMap("LuminesStandard", throwIfNotFound: true);
         m_LuminesStandard_MovePiece = m_LuminesStandard.FindAction("MovePiece", throwIfNotFound: true);
+        m_LuminesStandard_MoveUp = m_LuminesStandard.FindAction("MoveUp", throwIfNotFound: true);
+        m_LuminesStandard_MoveDown = m_LuminesStandard.FindAction("MoveDown", throwIfNotFound: true);
+        m_LuminesStandard_MoveLeft = m_LuminesStandard.FindAction("MoveLeft", throwIfNotFound: true);
+        m_LuminesStandard_MoveRight = m_LuminesStandard.FindAction("MoveRight", throwIfNotFound: true);
         m_LuminesStandard_RotateCw = m_LuminesStandard.FindAction("RotateCw", throwIfNotFound: true);
         m_LuminesStandard_RotateCcw = m_LuminesStandard.FindAction("RotateCcw", throwIfNotFound: true);
         m_LuminesStandard_SoftDrop = m_LuminesStandard.FindAction("SoftDrop", throwIfNotFound: true);
@@ -386,6 +470,10 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_LuminesStandard;
     private List<ILuminesStandardActions> m_LuminesStandardActionsCallbackInterfaces = new List<ILuminesStandardActions>();
     private readonly InputAction m_LuminesStandard_MovePiece;
+    private readonly InputAction m_LuminesStandard_MoveUp;
+    private readonly InputAction m_LuminesStandard_MoveDown;
+    private readonly InputAction m_LuminesStandard_MoveLeft;
+    private readonly InputAction m_LuminesStandard_MoveRight;
     private readonly InputAction m_LuminesStandard_RotateCw;
     private readonly InputAction m_LuminesStandard_RotateCcw;
     private readonly InputAction m_LuminesStandard_SoftDrop;
@@ -405,6 +493,22 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "LuminesStandard/MovePiece".
         /// </summary>
         public InputAction @MovePiece => m_Wrapper.m_LuminesStandard_MovePiece;
+        /// <summary>
+        /// Provides access to the underlying input action "LuminesStandard/MoveUp".
+        /// </summary>
+        public InputAction @MoveUp => m_Wrapper.m_LuminesStandard_MoveUp;
+        /// <summary>
+        /// Provides access to the underlying input action "LuminesStandard/MoveDown".
+        /// </summary>
+        public InputAction @MoveDown => m_Wrapper.m_LuminesStandard_MoveDown;
+        /// <summary>
+        /// Provides access to the underlying input action "LuminesStandard/MoveLeft".
+        /// </summary>
+        public InputAction @MoveLeft => m_Wrapper.m_LuminesStandard_MoveLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "LuminesStandard/MoveRight".
+        /// </summary>
+        public InputAction @MoveRight => m_Wrapper.m_LuminesStandard_MoveRight;
         /// <summary>
         /// Provides access to the underlying input action "LuminesStandard/RotateCw".
         /// </summary>
@@ -450,6 +554,18 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @MovePiece.started += instance.OnMovePiece;
             @MovePiece.performed += instance.OnMovePiece;
             @MovePiece.canceled += instance.OnMovePiece;
+            @MoveUp.started += instance.OnMoveUp;
+            @MoveUp.performed += instance.OnMoveUp;
+            @MoveUp.canceled += instance.OnMoveUp;
+            @MoveDown.started += instance.OnMoveDown;
+            @MoveDown.performed += instance.OnMoveDown;
+            @MoveDown.canceled += instance.OnMoveDown;
+            @MoveLeft.started += instance.OnMoveLeft;
+            @MoveLeft.performed += instance.OnMoveLeft;
+            @MoveLeft.canceled += instance.OnMoveLeft;
+            @MoveRight.started += instance.OnMoveRight;
+            @MoveRight.performed += instance.OnMoveRight;
+            @MoveRight.canceled += instance.OnMoveRight;
             @RotateCw.started += instance.OnRotateCw;
             @RotateCw.performed += instance.OnRotateCw;
             @RotateCw.canceled += instance.OnRotateCw;
@@ -476,6 +592,18 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @MovePiece.started -= instance.OnMovePiece;
             @MovePiece.performed -= instance.OnMovePiece;
             @MovePiece.canceled -= instance.OnMovePiece;
+            @MoveUp.started -= instance.OnMoveUp;
+            @MoveUp.performed -= instance.OnMoveUp;
+            @MoveUp.canceled -= instance.OnMoveUp;
+            @MoveDown.started -= instance.OnMoveDown;
+            @MoveDown.performed -= instance.OnMoveDown;
+            @MoveDown.canceled -= instance.OnMoveDown;
+            @MoveLeft.started -= instance.OnMoveLeft;
+            @MoveLeft.performed -= instance.OnMoveLeft;
+            @MoveLeft.canceled -= instance.OnMoveLeft;
+            @MoveRight.started -= instance.OnMoveRight;
+            @MoveRight.performed -= instance.OnMoveRight;
+            @MoveRight.canceled -= instance.OnMoveRight;
             @RotateCw.started -= instance.OnRotateCw;
             @RotateCw.performed -= instance.OnRotateCw;
             @RotateCw.canceled -= instance.OnRotateCw;
@@ -535,6 +663,34 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMovePiece(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MoveUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveUp(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MoveDown" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveDown(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MoveLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MoveRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveRight(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "RotateCw" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
