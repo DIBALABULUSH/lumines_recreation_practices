@@ -171,5 +171,10 @@ namespace Lumines
                 }
             }
         }
+
+        public void CheckAndMerge2X2Cube()
+        {
+            
+        }
     }
 }

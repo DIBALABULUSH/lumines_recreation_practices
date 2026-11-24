@@ -128,4 +128,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1b02b4074614791b2efa591711590bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  freeFallTimePerTile: 0.12
+  freeFallTimePerTile: 0.06

@@ -144,7 +144,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   gravityDropDurationPerTile: 0.5
-  hardDropDurationPerTile: 0.015
+  hardDropDurationPerTile: 0.02
   _pieceBlockList:
   - {fileID: 6147886936500922571}
   - {fileID: 5423107788382581938}

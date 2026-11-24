@@ -225,6 +225,13 @@ namespace Lumines
             _currentPiece = null;
             GetAndSpawnPieceFromNextSequence();
             FillTheNextPieceQueue();
+
+            CheckAndMerge2x2CubeOnBoardField();
+        }
+
+        private void CheckAndMerge2x2CubeOnBoardField()
+        {
+            boardField.CheckAndMerge2X2Cube();
         }
 
         private void FillTheNextPieceQueue()
