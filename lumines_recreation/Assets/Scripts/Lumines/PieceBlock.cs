@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using Tools;
 using UnityEngine;
 
@@ -10,7 +11,8 @@ namespace Lumines
     public class PieceBlock : MonoBehaviour
     {
         [SerializeField, Min(0.01f)] private float freeFallTimePerTile;
-        private Vector2Int _gridPosition;
+        [SerializeField, ReadOnly] private Vector2Int _gridPosition;
+        [SerializeField, ReadOnly] private Vector2Int _localGridPosition;
         
         private BoardField _boardField;
 
@@ -18,7 +20,9 @@ namespace Lumines
         private bool _isFreeFalling;
 
         private bool _isLocked;
-        
+
+        public Vector2Int LocalGridPos => _localGridPosition;
+
         public void SetBoardField(BoardField boardField)
         {
             _boardField = boardField;
@@ -51,14 +55,21 @@ namespace Lumines
                 return;
             }
             
+            // get the target column top empty grid position before moving
+            var columnTopEmptyPosition =
+                _boardField.GetColumnTopEmptyGridPosition(_gridPosition.x);
+            
             var deltaPosY = Time.deltaTime / freeFallTimePerTile;
             transform.localPosition -= Vector3.up * deltaPosY;
             
             // convert continue position into grid position
             // use round for converting, DO NOT use floor, it will cause occupy order issue
             var pos = transform.localPosition - Vector3.one * 0.5f;
-            var newGridPosX = Mathf.Clamp(Mathf.RoundToInt(pos.x), 0, _boardField.BoardWidth - 1);
-            var newGridPosY= Mathf.Clamp(Mathf.RoundToInt(pos.y), 0, _boardField.BoardHeight - 1);
+            var newGridPosX =
+                Mathf.Clamp(Mathf.RoundToInt(pos.x), 0, _boardField.BoardWidth - 1);
+            // check after free fall the block is not beyond the top empty grid position
+            var newGridPosY= 
+                Mathf.Clamp(Mathf.RoundToInt(pos.y), columnTopEmptyPosition, _boardField.BoardHeight - 1);
             _gridPosition = new Vector2Int(newGridPosX, newGridPosY);
             
             CheckAndLockBlock();
@@ -72,7 +83,10 @@ namespace Lumines
             }
             
             var columnTopEmptyPosition =
-                _boardField.GetBoardFieldColumnTopEmptyPosition(_gridPosition.x);
+                _boardField.GetColumnTopEmptyGridPosition(_gridPosition.x);
+            
+            // todo : block over the board directly disappear
+            
             if (columnTopEmptyPosition < 0)
             {
                 Debug.LogWarning("Column Top Position is negative");
@@ -103,6 +117,11 @@ namespace Lumines
                 new Vector3(_gridPosition.x + 0.5f, _gridPosition.y + 0.5f, transform.localPosition.z);
             transform.localPosition = lockPosition;
             D.Info($"{lockPosition}", Color.green); 
+        }
+
+        public void SetLocalGridPos(Vector2Int localGridPosition)
+        {
+            _localGridPosition = localGridPosition;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
+using Tools;
 using UnityEngine;
 using Random = System.Random;
 
@@ -19,6 +20,11 @@ namespace Lumines
         [Header("Components")]
         public PieceVisual visual;
 
+        [Header("PieceSize")]
+        public Vector2Int pieceSize = new Vector2Int(2, 2);
+            
+        private readonly Vector2 _rotateCenter = new Vector2(0.5f, 0.5f);
+        
         [Header("Movement")]
         public float dasMoveDurationPerTile = 0.04f;
         public float normalMoveDuration = 0.12f;
@@ -32,14 +38,14 @@ namespace Lumines
         public float hardDropDurationPerTile = 0.015f;
         
         // Piece type
-        private readonly byte[] piece = new byte[4];
+        // private readonly byte[] _piece = new byte[4];
         
-        private readonly Vector2 rotateCenter = new Vector2(0.5f, 0.5f);
+        private int PieceWidth => pieceSize.x;
+        private int PieceHeight => pieceSize.y;
 
         [SerializeField] private List<PieceBlock> _pieceBlockList;
         
         // base data
-        private byte _pieceByte;
         private int _rotateCount;
         // use center position, range is [0, 20]
         // standard spawn pos is (8, 11),
@@ -104,8 +110,22 @@ namespace Lumines
             _pieceBlockList.Clear();
 
             var pieceBlocks = GetComponentsInChildren<PieceBlock>();
-            _pieceBlockList.AddRange(pieceBlocks);
 
+            // todo: we don't other shapes piece, now only handling the 2x2 piece
+            //      we need a procedural solution for dynamic piece shape
+            for (int y = 0; y < pieceSize.y; y++)
+            {
+                for (int x = 0; x < pieceSize.x; x++)
+                {
+                    var index =  y * pieceSize.x + x;
+                    var pieceBlock = pieceBlocks[index];
+
+                    var localGridPos = new Vector2Int(x, y);
+                    pieceBlock.SetLocalGridPos(localGridPos);
+                    _pieceBlockList.Add(pieceBlock);
+                }
+            }
+            
             _lockStartCountingTime = -1f;
         }
 
@@ -118,16 +138,7 @@ namespace Lumines
         {
             _spawnTime = Time.time;
             _boardField = boardField;
-
-            _pieceByte = pieceValue;
-            if (piece != null)
-            {
-                piece[0] = (byte)(_pieceByte & 1);
-                piece[1] = (byte)((_pieceByte >> 1) & 1);
-                piece[2] = (byte)((_pieceByte >> 2) & 1);
-                piece[3] = (byte)((_pieceByte >> 3) & 1);
-            }
-
+            
             _rotateCount = 0;
 
             _gridPieceCenterPos = new Vector2Int(8, 11);
@@ -182,33 +193,23 @@ namespace Lumines
 
         private void RotatePiece(float angle)
         {
-            var newPiece = new byte[2, 2];
-            for (int x = 0; x < 2; x++)
+            for (var i = 0; i < _pieceBlockList.Count; i++)
             {
-                for (int y = 0; y < 2; y++)
-                {
-                    var index = y * x + y;
-                    var point = new Vector2(x, y);
-                    // use rotate matrix to rotate the coord with the 0.5, 0.5 point
-                    // create a coordinate based on 0.5, 0.5 point
-                    point -= rotateCenter;
-                    // then rotate the point
-                    var targetCoord = Rotate2DMatrix(point, angle);
-                    var newX = (int)targetCoord.x;
-                    var newY = (int)targetCoord.y;
-                    // cache calculate result
-                    newPiece[newX, newY] = piece[index];
-                }
-            }
+                var pieceBlock = _pieceBlockList[i];
+                var localPos = (Vector2)pieceBlock.LocalGridPos;
+                // use rotate matrix to rotate the coord with the rotate center position
+                // create a coordinate based on rotate center position
+                localPos -= _rotateCenter;
+                // then rotate the point
+                var targetCoord = Rotate2DMatrix(localPos, angle);
+                // add back the adjustment
+                var newX = targetCoord.x + _rotateCenter.x;
+                var newY = targetCoord.y + _rotateCenter.y;
+                
+                var newLocalGridPos = new Vector2Int(Mathf.RoundToInt(newX), Mathf.RoundToInt(newY));
+                pieceBlock.SetLocalGridPos(newLocalGridPos);
 
-            // update the piece
-            for (int x = 0; x < 2; x++)
-            {
-                for (int y = 0; y < 2; y++)
-                {
-                    var index = y * x + y;
-                    piece[index] = newPiece[x, y];
-                }
+                // Debug.Log($"result: {targetCoord} old pos: {x}, {y} new pos: {newX}, {newY}");
             }
         }
 
@@ -336,7 +337,7 @@ namespace Lumines
 
             // check the piece is touch something then directly lock the piece
             var result = _boardField.CheckIsThereBlockUnderThePiece(this);
-            Debug.Log(result);
+            // Debug.Log(result);
             if (result)
             {
                 LockPiece();
@@ -435,6 +436,9 @@ namespace Lumines
             SplitPieceBlock();
 
             OnPieceLocked?.Invoke(this);
+            
+            // all done destroy self
+            Destroy(gameObject);
         }
         
         /// <summary>
@@ -442,16 +446,15 @@ namespace Lumines
         /// </summary>
         private void SplitPieceBlock()
         {
+            D.Info("=== SplitPieceBlock ===", Color.cyan);
+            
             // reverse iteration and detach the block inside the piece
             for (var i = 0; i < _pieceBlockList.Count; i++)
             {
                 var block = _pieceBlockList[i];
                 block.transform.SetParent(_boardField.PieceContainer, true);
-                var localGridPosY = i / 2;
-                var localGridPosX = i % 2;
-                var localGridPos = new Vector2Int(localGridPosX, localGridPosY);
                 var targetPos =
-                    _gridPieceCenterPos - Vector2Int.one + localGridPos;
+                    _gridPieceCenterPos - Vector2Int.one + block.LocalGridPos;
                 // Debug.Log($"{_gridPieceCenterPos} | {localGridPos}");
                 
                 // well start free fall must be executed earlier than set grid pos
@@ -486,6 +489,11 @@ namespace Lumines
         /// </summary>
         private void UpdateSmoothHorizontalMove()
         {
+            if (_isHardDropping)
+            {
+                return;
+            }
+            
             if (!_isDasMoving)
             {
                 // rough smooth movement
@@ -497,7 +505,7 @@ namespace Lumines
             
             // calculate das move distance
             var dasInputDuration = Time.time - _lastDasStartTime;
-            Debug.Log($"{dasInputDuration} | {_dasMoveCount * dasMoveDurationPerTile}");
+            // Debug.Log($"{dasInputDuration} | {_dasMoveCount * dasMoveDurationPerTile}");
             
             // if deltaDasTime is enough for one tile moving
             if (dasInputDuration >= _dasMoveCount * dasMoveDurationPerTile)
@@ -525,13 +533,16 @@ namespace Lumines
         /// rotate 2D matrix. rotate point with coordinate origin.
         /// </summary>
         /// <param name="point"></param>
-        /// <param name="angle"></param> 
+        /// <param name="angle"></param>
+        [Button]
         private Vector2 Rotate2DMatrix(Vector2 point, float angle)
         {
             var rad = Mathf.Deg2Rad * angle;
             
-            var x = point.x * Mathf.Cos(rad) + point.y * Mathf.Sin(rad);
-            var y = -point.x * Mathf.Sin(rad) + point.y * Mathf.Cos(rad);
+            var x = point.x * Mathf.Cos(rad) - point.y * Mathf.Sin(rad);
+            var y = point.x * Mathf.Sin(rad) + point.y * Mathf.Cos(rad);
+            
+            // Debug.Log($"{x} | {y}");
             
             return new Vector2(x, y);
         }

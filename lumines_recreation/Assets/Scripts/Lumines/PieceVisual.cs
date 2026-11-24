@@ -38,7 +38,7 @@ namespace Lumines
 
             var lastRotation = _rotateCount * rotateAnglePerStep;
             var targetRotation = lastRotation + ccw * rotateAnglePerStep;
-            Debug.Log(targetRotation + " | " + targetRotation);
+            // Debug.Log(targetRotation + " | " + targetRotation);
 
             _rotateCount = rotate;
             
@@ -50,7 +50,7 @@ namespace Lumines
                         rotateRoot.localRotation =
                             Quaternion.Euler(0f, 0f, value);
                         
-                        Debug.Log(rotateRoot.localRotation + " | " + value);
+                        // Debug.Log(rotateRoot.localRotation + " | " + value);
                     },
                     targetRotation.z, rotateDuration)
                 .SetEase(rotateCurve);
