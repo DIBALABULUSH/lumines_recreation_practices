@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Sirenix.Utilities;
+using System.Linq;
 using Tools;
 using UnityEngine;
 
@@ -12,11 +10,14 @@ namespace Lumines
     /// </summary>
     public class BoardField : MonoBehaviour
     {
+        [Header("Prefabs")]
+        [SerializeField] private MergedPieceBlock mergedPieceBlockPrefab;
+        
         [Header("Components")]
         [SerializeField] private Transform pieceSpawnRoot;
         [SerializeField] private Transform pieceContainer;
         
-        private List<PieceBlock>[] _pieceBlockListArray;
+        private ArrayGrid<PieceBlock> _pieceBlockArrayGrid;
         
         private Vector2Int _boardSize = new Vector2Int(16, 10);
         public Vector2Int BoardSize => _boardSize;
@@ -35,33 +36,20 @@ namespace Lumines
 
         public void Init()
         {
-            _pieceBlockListArray ??= new List<PieceBlock>[_boardSize.x];
-
-            for (var i = 0; i < _pieceBlockListArray.Length; i++)
-            {
-                _pieceBlockListArray[i] ??= new List<PieceBlock>();
-                _pieceBlockListArray[i]?.Clear();
-                
-                _pieceBlockListArray[i].SetLength(10);
-            } 
+            _pieceBlockArrayGrid ??= new ArrayGrid<PieceBlock>(_boardSize.x, _boardSize.y);
         }
 
         public void ClearBoard()
         {
-            for (var i = 0; i < _pieceBlockListArray.Length; i++)
+            foreach (var pieceBlock in _pieceBlockArrayGrid)
             {
-                var pieceBlockList = _pieceBlockListArray[i];
-                for (var j = 0; j < pieceBlockList.Count; j++)
+                if (pieceBlock == null)
                 {
-                    var piece = pieceBlockList[j];
-                    if (piece == null)
-                    {
-                        continue;
-                    }
-                    Destroy(piece.gameObject);
-                    pieceBlockList[j] = null;
+                    continue;
                 }
-            } 
+                Destroy(pieceBlock.gameObject);
+            }
+            _pieceBlockArrayGrid.Clear();
         }
         
         public bool PlaceBlockOnField(PieceBlock block, Vector2Int gridPos)
@@ -70,7 +58,7 @@ namespace Lumines
             var row = gridPos.y;
             
             // out array bound check
-            if (col < 0 || col >= _pieceBlockListArray.Length)
+            if (col < 0 || col >= _pieceBlockArrayGrid.Length)
             {
                 Debug.Log($"Invalid grid position: {gridPos} for placing block on field");
                 return false;
@@ -79,25 +67,23 @@ namespace Lumines
             // Debug.Log($"Get block queue on col[{col}]");
             
             // get the column in board field
-            var blockList = _pieceBlockListArray[col];
+            var blockList = _pieceBlockArrayGrid.GetColumnItems(col);
 
             var targetBlock = blockList[row];
             if (targetBlock == null)
             {
                 D.Info($"Place block on {gridPos}", Color.green);
-                _pieceBlockListArray[col][row] = block;
+                _pieceBlockArrayGrid.SetItemAt(col, row, block);
                 
-                // if we successfully place an block on the field
+                // if we successfully place a block on the field
                 // we can check the blocks surround the block we just placed
-                CheckAndMerge2X2CubeAtPosition(gridPos);
+                CheckAndMerge2X2CubeAtPosition(gridPos, block.BlockType, new Vector2Int(2, 2));
                 
                 return true;
             }
-            else
-            { 
-                Debug.LogWarning($"Target position {gridPos} already have an existing block");
-                return false;
-            }
+            
+            Debug.LogWarning($"Target position {gridPos} already have an existing block");
+            return false;
         }
         
         /// <summary>
@@ -119,7 +105,7 @@ namespace Lumines
         public int GetColumnTopEmptyGridPosition(int col)
         {
             // out array bound check
-            if (col < 0 || col >= _pieceBlockListArray.Length)
+            if (col < 0 || col >= _pieceBlockArrayGrid.Length)
             {
                 return -1;
             }
@@ -127,9 +113,9 @@ namespace Lumines
             // Debug.Log($"Get block queue on col[{col}]");
             
             // get the column in board field
-            var blockList = _pieceBlockListArray[col];
+            var blockList = _pieceBlockArrayGrid.GetColumnItems(col);
 
-            for (var i = 0; i < blockList.Count; i++)
+            for (var i = 0; i < blockList.Length; i++)
             {
                 var block = blockList[i];
                 if (block == null)
@@ -168,35 +154,72 @@ namespace Lumines
             return false;
         }
 
-        public void CheckAndMerge2X2CubeAtPosition(Vector2Int blockPos)
+        private Vector2Int[] checkOffsetArray = new Vector2Int[]
         {
-            
+            new Vector2Int(-1, -1), // LB
+            new Vector2Int(-1, 0), // LT
+            new Vector2Int(0, -1), // RB
+            new Vector2Int(0, 0), // RT
+        };
+        
+        // todo : make it can check NxM rect at position
+        public void CheckAndMerge2X2CubeAtPosition(
+            Vector2Int blockPos, byte blockType, Vector2Int mergedSize)
+        {
+            // check four position
+            for (int i = 0; i < 4; i++)
+            {
+                var targetPos = blockPos + checkOffsetArray[i];
+                if((uint)targetPos.x >= _boardSize.x || (uint)targetPos.y >= _boardSize.y)
+                {
+                    continue;
+                }
+
+                var blocks = 
+                    _pieceBlockArrayGrid.GetFullRectItems(targetPos.x, targetPos.y, 2, 2);
+                var canMerge = blocks.All(block => block.BlockType == blockType);
+                
+                if (!canMerge)
+                {
+                    continue;
+                }
+                
+                // todo : recycle block
+                // hide piece block and spawn merged block
+                foreach (var block in blocks)
+                {
+                    block.enabled = false;
+                    block.gameObject.SetActive(false);
+                }
+                
+                // spawn merged block
+                var mergedPieceBlock = Instantiate(mergedPieceBlockPrefab, pieceContainer);
+                var centerPos = blockPos.ToVec2() - Vector2.one * mergedSize * 0.5f;
+                mergedPieceBlock.Init(mergedSize, centerPos);
+            }
         }
         
         private void OnDrawGizmos()
         {
-            if (_pieceBlockListArray == null)
+            if (_pieceBlockArrayGrid == null)
             {
                 return;
             }
-            
-            for (int x = 0; x < _pieceBlockListArray.Length; x++)
+
+            var count = 0;
+            foreach (var block in _pieceBlockArrayGrid)
             {
-                var blockList = _pieceBlockListArray[x];
-                for (int y = 0; y < blockList.Count; y++)
+                if (block == null)
                 {
-                    var block = blockList[y];
-                    if (block == null)
-                    {
-                        Gizmos.color = Color.red;
-                        var pos = new Vector3(x, y) + Vector3.one * 0.5f - new Vector3(8, 5, 2f);
-                        Gizmos.DrawCube(pos, Vector3.one * 0.3f);
-                        continue;
-                    }
-                    
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawCube(block.transform.position - Vector3.forward * 2f, Vector3.one * 0.3f);
+                    var coord = _pieceBlockArrayGrid.GetGridCoord(count);
+                    Gizmos.color = Color.red;
+                    var pos = new Vector3(coord.x, coord.y) + Vector3.one * 0.5f - new Vector3(8, 5, 2f);
+                    Gizmos.DrawCube(pos, Vector3.one * 0.3f);
+                    continue;
                 }
+                    
+                Gizmos.color = Color.green;
+                Gizmos.DrawCube(block.transform.position - Vector3.forward * 2f, Vector3.one * 0.3f);
             }
         }
     }

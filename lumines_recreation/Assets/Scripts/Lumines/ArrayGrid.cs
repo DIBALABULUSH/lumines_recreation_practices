@@ -26,7 +26,7 @@ namespace Lumines
             _array = new T[width * height];
         }
 
-        public T[] GetTargetColumnItems(int columnIndex)
+        public T[] GetColumnItems(int columnIndex)
         {
             if ((uint)columnIndex >= (uint)_width)
                 throw new ArgumentOutOfRangeException(nameof(columnIndex));
@@ -41,7 +41,7 @@ namespace Lumines
             return result;
         }
         
-        public T[] GetTargetRowItems(int rowIndex)
+        public T[] GetRowItems(int rowIndex)
         {
             if ((uint)rowIndex >= (uint)_height)
                 throw new ArgumentOutOfRangeException(nameof(rowIndex));
@@ -53,7 +53,7 @@ namespace Lumines
             return result;
         }
 
-        public T[] GetSquareFrameItems(int startX, int startY, int wid, int hgt)
+        public T[] GetRectFrameItems(int startX, int startY, int wid, int hgt)
         {
             // check valid width and height
             if (wid < 0)
@@ -61,6 +61,9 @@ namespace Lumines
             if (hgt < 0)
                 throw new ArgumentOutOfRangeException(nameof(hgt));
 
+            if(wid == 0 || hgt == 0)
+                return Array.Empty<T>();
+            
             // double-check the index range
             if ((uint)startX >= (uint)_width ||
                 (uint)startY >= (uint)_height || 
@@ -70,24 +73,6 @@ namespace Lumines
                 throw new IndexOutOfRangeException();
             }
             
-            // if we get the 1x1 size square frame items
-            if (wid == 1 && hgt == 1)
-            {
-                return new []{_array[GetIndex(startX, startY)]};
-            }
-
-            // wid == 1 directly return target column 
-            if (wid == 1)
-            {
-                // todo:
-            }
-            
-            // wid == 1 directly return target row 
-            if (hgt == 1)
-            {
-                // todo : 
-            }
-            
             // set the result array
             var size = wid == 1 || hgt == 1 ?
                 wid * hgt :
@@ -95,8 +80,8 @@ namespace Lumines
             var result = new T[size];
             var count = 0;
             
-            var endX = startX + wid - 1;
-            var endY = startY + hgt - 1;
+            var endIndexX = startX + wid - 1;
+            var endIndexY = startY + hgt - 1;
             
             // get top row items
             for (int x = startX; x < startX + wid; x++)
@@ -105,45 +90,158 @@ namespace Lumines
                 count++;
             }
             
-            // get center items (need to check when width and height is 1, 2)
-            if (hgt > 2)
+            // get center items from left and right
+            // if width == 0 then we don't care the right item
+            var centerStartY = startY + 1;
+            var centerEndY = startY + hgt - 1;
+            for (int y = centerStartY; y < centerEndY; y++)
             {
-                // if hgt > 2 then center items will collect from left and right
-                var centerStartY = startY + 1;
-                var centerEndY = startY + hgt - 1;
-                for (int y = centerStartY; y < centerEndY; y++)
+                // left item
+                result[count] = _array[y * _width + startX];
+                count++;
+                
+                if (wid <= 1)
                 {
-                    var leftItem = _array[y * _width + startX];
-                    result[count] = leftItem;
-                    count++;
-                    if (wid > 1)
-                    {
-                        var rightItem = _array[y * _width + endX];
-                        result[count] = rightItem;
-                        count++;
-                    }
+                    continue;
                 }
+
+                // right item
+                result[count] = _array[y * _width + endIndexX];
+                count++;
             }
             
             // get bottom row items
+            // if height == 0 then we don't care the bottom item
             if (hgt > 1)
             {
                 for (int x = startX; x < startX + wid; x++)
                 {
-                    result[count] = _array[endY * _width + x];
+                    result[count] = _array[endIndexY * _width + x];
                     count++;
                 }
             }
 
-            // calculate fail
+            // collect issue
             if (count != size)
             {
-                throw new ArgumentException();
+                throw new ArgumentException(
+                    $"Trying to collect {size} items, but collected {count} items.");
             }
 
             return result;
         }
 
+        public T[] GetFullRectItems(int startX, int startY, int wid, int hgt)
+        {
+            // check valid width and height
+            if (wid < 0)
+                throw new ArgumentOutOfRangeException(nameof(wid));
+            if (hgt < 0)
+                throw new ArgumentOutOfRangeException(nameof(hgt));
+
+            if(wid == 0 || hgt == 0)
+                return Array.Empty<T>();
+            
+            // double-check the index range
+            if ((uint)startX >= (uint)_width ||
+                (uint)startY >= (uint)_height || 
+                wid > _width - startX ||
+                hgt > _height - startY)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            
+            // set the result array
+            var size = wid * hgt;
+            var result = new T[size];
+            
+            var endIndexY = startY + hgt - 1;
+
+            for (int y = startY; y <= endIndexY; y++)
+            {
+                Array.Copy(
+                    _array,
+                    (startY + y) * _width + startX,
+                    result,
+                    y * wid,
+                    wid);
+            }
+            
+            return result;
+        }
+        
+        public void AlignRowLeft(int row)
+        {
+            if ((uint)row >= (uint)_height)
+                throw new ArgumentOutOfRangeException(nameof(row));
+
+            CompactItems(row * _width, 
+                1, 
+                _width);
+        }
+
+        public void AlignRowRight(int row)
+        {
+            if ((uint)row >= (uint)_height)
+                throw new ArgumentOutOfRangeException(nameof(row));
+
+            CompactItems(
+                row * _width + _width - 1, 
+                -1, 
+                _width);
+        }
+
+        public void AlignColumnUp(int column)
+        {
+            if ((uint)column >= (uint)_width)
+                throw new ArgumentOutOfRangeException(nameof(column));
+
+            CompactItems(
+                column, 
+                _width, 
+                _height);
+        }
+
+        public void AlignColumnDown(int column)
+        {
+            if ((uint)column >= (uint)_width)
+                throw new ArgumentOutOfRangeException(nameof(column));
+
+            CompactItems(
+                (_height - 1) * _width + column,
+                -_width,
+                _height);
+        }
+        
+        private void CompactItems(int startIndex, int step, int length)
+        {
+            int write = startIndex;
+            int read = startIndex;
+
+            for (int i = 0; i < length; i++, read += step)
+            {
+                var item = _array[read];
+
+                if (item is null)
+                    continue;
+
+                if (read != write)
+                {
+                    _array[write] = item;
+                    _array[read] = default;
+                }
+
+                write += step;
+            }
+        }
+        
+        public void SetItemAt(int x, int y, T item)
+        {
+            var index = GetIndex(x, y);
+            
+            _array[index] = item;
+        }
+        
         private int GetIndex(int x, int y)
         {
             if ((uint)x >= (uint)Width ||
@@ -154,6 +252,19 @@ namespace Lumines
             
             return y * _width + x;
         }
+
+        public (int x, int y) GetGridCoord(int index)
+        {
+            if ((uint)index >= Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+            
+            var x = index % _width;
+            var y = index / _width;
+            
+            return (x, y);
+        }
         
         public IEnumerator<T> GetEnumerator()
         {
@@ -163,6 +274,17 @@ namespace Lumines
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        /// <summary>
+        /// reset Array grid, set all items into default
+        /// </summary>
+        public void Clear()
+        {
+            for (var i = 0; i < Length; i++)
+            {
+                _array[i] = default;
+            }
         }
     }
 }

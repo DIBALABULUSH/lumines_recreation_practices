@@ -16,12 +16,16 @@ namespace Lumines
         
         private BoardField _boardField;
 
+        // 0 is type A, 1 is type B,
+        // 2 and other numbers are other types
+        private byte _blockType;
+        
         // the block drop down when the blocks under this block are clear
         private bool _isFreeFalling;
-
         private bool _isLocked;
 
         public Vector2Int LocalGridPos => _localGridPosition;
+        public byte BlockType => _blockType;
 
         public void SetBoardField(BoardField boardField)
         {
