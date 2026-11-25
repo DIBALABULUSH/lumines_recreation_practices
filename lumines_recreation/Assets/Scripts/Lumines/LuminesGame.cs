@@ -16,8 +16,14 @@ namespace Lumines
         [SerializeField] private InputHandler inputHandler;
         [SerializeField] private NextPiecePreviewSequence nextPiecePreviewSequence;
         [SerializeField] private PiecePosIndicator piecePosIndicator;
+        [SerializeField] private ScanTimeline scanTimeline;
 
         [Header("Gameplay Settings")] 
+        // music bpm, the border field has 16 x 10,
+        // it presents the 4/4 beat rhythm 
+        [SerializeField] private float bpm = 100f;
+        
+        [Header("Handling Settings")] 
         [SerializeField] private float dasWindow = 0.1f;
         [SerializeField] private float dasBuffer = 0.1f;
         [SerializeField] private float continueMoveInterval = 0.04f;
@@ -59,6 +65,9 @@ namespace Lumines
 
         private void OnResetGame()
         { 
+            scanTimeline.ResetTimelineToStartPosition();
+            scanTimeline.StartTimeline();
+            
             boardField.ClearBoard();
         }
 
@@ -272,6 +281,11 @@ namespace Lumines
             // take one and set to current piece
             GetAndSpawnPieceFromNextSequence();
 
+            // init scan timeline
+            scanTimeline.InitScanTimeline(bpm, boardField);
+            scanTimeline.ResetTimelineToStartPosition();
+            scanTimeline.StartTimeline();
+            
             // reset some visual effects
 
             // all done!!
