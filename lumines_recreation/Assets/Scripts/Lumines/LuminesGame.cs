@@ -259,7 +259,7 @@ namespace Lumines
 
         private void CheckAndMerge2x2CubeOnBoardField()
         {
-            boardField.CheckAndMerge2X2Cube();
+            // boardField.CheckAndMerge2X2CubeAtPosition();
         }
 
         private void FillTheNextPieceQueue()

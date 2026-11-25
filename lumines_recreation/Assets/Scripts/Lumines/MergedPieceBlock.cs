@@ -8,7 +8,7 @@ namespace Lumines
     /// </summary>
     public class MergedPieceBlock : MonoBehaviour
     {
-        [SerializeField] private MergedPieceBlock visual;
+        [SerializeField] private MergedPieceBlockVisual visual;
         
         // this position is different from grid position,
         // it can be 
@@ -17,9 +17,21 @@ namespace Lumines
         // StartFrom 2x2 until the 10x10
         private Vector2Int _blockSize;
 
-        public void ScannedByTimeline()
+        private bool _isScanning;
+        
+        public void StartScannedByTimeline()
         {
+            if (_isScanning)
+            {
+                return;
+            }
             
+            _isScanning = true;
+        }
+        
+        public void EndScannedByTimeline()
+        {
+            Destroy(gameObject);
         }
     }
 }

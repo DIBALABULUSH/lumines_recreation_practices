@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
@@ -67,6 +68,11 @@ namespace Lumines
                 var block = value ? blockBPrefab : blockAPrefab;
                 
             }
+        }
+
+        private void OnDestroy()
+        {
+            _rotateTween?.Kill();
         }
     }
 }

@@ -86,6 +86,11 @@ namespace Lumines
             {
                 D.Info($"Place block on {gridPos}", Color.green);
                 _pieceBlockListArray[col][row] = block;
+                
+                // if we successfully place an block on the field
+                // we can check the blocks surround the block we just placed
+                CheckAndMerge2X2CubeAtPosition(gridPos);
+                
                 return true;
             }
             else
@@ -163,6 +168,11 @@ namespace Lumines
             return false;
         }
 
+        public void CheckAndMerge2X2CubeAtPosition(Vector2Int blockPos)
+        {
+            
+        }
+        
         private void OnDrawGizmos()
         {
             if (_pieceBlockListArray == null)
@@ -188,11 +198,6 @@ namespace Lumines
                     Gizmos.DrawCube(block.transform.position - Vector3.forward * 2f, Vector3.one * 0.3f);
                 }
             }
-        }
-
-        public void CheckAndMerge2X2Cube()
-        {
-            
         }
     }
 }
