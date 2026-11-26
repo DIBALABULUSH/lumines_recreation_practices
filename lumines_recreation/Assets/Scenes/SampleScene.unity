@@ -206,6 +206,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882d33d56935bbf479fc7b2f434f32f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mergedPieceBlockPrefabA: {fileID: 3855856536744819906, guid: 50f8a37f841c4bd478279e68f38cf136,
+    type: 3}
+  mergedPieceBlockPrefabB: {fileID: -6780550040234810658, guid: aab4d92d6d01dc74186623c64df211c0,
+    type: 3}
   pieceSpawnRoot: {fileID: 922403272}
   pieceContainer: {fileID: 191433404}
 --- !u!1 &330585543

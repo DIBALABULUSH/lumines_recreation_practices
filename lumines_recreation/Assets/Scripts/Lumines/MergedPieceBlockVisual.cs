@@ -7,6 +7,17 @@ namespace Lumines
     /// </summary>
     public class MergedPieceBlockVisual : MonoBehaviour
     {
-        
+        [Header("Components")] 
+        public Transform transClearBox;
+
+        private void Awake()
+        {
+            transClearBox.gameObject.SetActive(false);
+        }
+
+        public void ReadyToClear()
+        {
+            transClearBox.gameObject.SetActive(true);
+        }
     }
 }

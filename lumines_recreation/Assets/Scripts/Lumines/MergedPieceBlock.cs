@@ -30,8 +30,11 @@ namespace Lumines
 
         private void UpdateBlock()
         {
-            transform.localScale = _blockSize.ToVec3();
+            var size = _blockSize.ToVec3();
+            size.z = 1f;
+            transform.localScale = size;
             transform.localPosition = _centerPosition.ToVec3();
+            visual.ReadyToClear();
         }
 
         public void StartScannedByTimeline()

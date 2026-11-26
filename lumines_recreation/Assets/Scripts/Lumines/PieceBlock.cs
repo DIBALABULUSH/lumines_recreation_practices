@@ -10,6 +10,9 @@ namespace Lumines
     /// </summary>
     public class PieceBlock : MonoBehaviour
     {
+        [Header("Components")]
+        [SerializeField] private PieceBlockVisual visual;
+        
         [SerializeField, Min(0.01f)] private float freeFallTimePerTile;
         [SerializeField, ReadOnly] private Vector2Int _gridPosition;
         [SerializeField, ReadOnly] private Vector2Int _localGridPosition;
@@ -24,8 +27,15 @@ namespace Lumines
         private bool _isFreeFalling;
         private bool _isLocked;
 
+        private bool _isReadyToClear;
+        
         public Vector2Int LocalGridPos => _localGridPosition;
         public byte BlockType => _blockType;
+
+        private void Awake()
+        {
+            visual = GetComponent<PieceBlockVisual>();
+        }
 
         public void SetBoardField(BoardField boardField)
         {
@@ -126,6 +136,12 @@ namespace Lumines
         public void SetLocalGridPos(Vector2Int localGridPosition)
         {
             _localGridPosition = localGridPosition;
+        }
+
+        public void PrepareToClear()
+        {
+            _isReadyToClear = true;
+            visual.ReadyToClear();
         }
     }
 }

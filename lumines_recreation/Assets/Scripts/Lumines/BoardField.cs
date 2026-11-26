@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.Utilities;
 using Tools;
 using UnityEngine;
 
@@ -179,7 +180,8 @@ namespace Lumines
             // check four position
             for (int i = 0; i < 4; i++)
             {
-                var targetPos = blockPos + checkOffsetArray[i];
+                var offset = checkOffsetArray[i];
+                var targetPos = blockPos + offset;
                 if((uint)targetPos.x >= _boardSize.x || (uint)targetPos.y >= _boardSize.y)
                 {
                     continue;
@@ -187,13 +189,46 @@ namespace Lumines
 
                 var blocks = 
                     _pieceBlockArrayGrid.GetFullRectItems(targetPos.x, targetPos.y, 2, 2);
-                var canMerge = blocks.All(block => block.BlockType == blockType);
+                // this check is invalid, return
+                if (blocks == null || blocks.Length == 0)
+                {
+                    return;
+                }
                 
+                // check block types
+                var canMerge = blocks.All(block => block?.BlockType == blockType);
                 if (!canMerge)
                 {
                     continue;
                 }
                 
+                // can merge these blocks, but we need to check the
+                // merged block is existing on the board field
+                
+                // if there are merged blocks, keep these piece block
+                // and activate vfx
+                // todo : temp solution to check the blocks is merged to bigger block
+                var notComplete = false;
+                foreach (var block in blocks)
+                {
+                    if (!block.enabled)
+                    {
+                        notComplete = true;
+                    }
+                    else
+                    {
+                        block.PrepareToClear();
+                    }
+                }
+
+                // if we have valid merged blocks, but can't merge into bigger block
+                // continue to next check
+                if (notComplete)
+                {
+                    continue;
+                }
+                
+                // if no merged block nearby, hide piece block and spawn merge block
                 // todo : recycle block
                 // hide piece block and spawn merged block
                 foreach (var block in blocks)
@@ -205,11 +240,16 @@ namespace Lumines
                 // spawn merged block
                 var prefab = blockType == 0 ? mergedPieceBlockPrefabA : mergedPieceBlockPrefabB;
                 var mergedPieceBlock = Instantiate(prefab, pieceContainer);
-                var centerPos = blockPos.ToVec2() - Vector2.one * mergedSize * 0.5f;
+                var centerPos = blockPos.ToVec2() + offset + Vector2.one * mergedSize * 0.5f;;
                 mergedPieceBlock.Init(mergedSize, centerPos);
                 
                 _mergedPieceBlockList.Add(mergedPieceBlock);
             }
+        }
+
+        public void GetLastClearablePosition()
+        {
+            
         }
         
         private void OnDrawGizmos()
@@ -228,11 +268,13 @@ namespace Lumines
                     Gizmos.color = Color.red;
                     var pos = new Vector3(coord.x, coord.y) + Vector3.one * 0.5f - new Vector3(8, 5, 2f);
                     Gizmos.DrawCube(pos, Vector3.one * 0.3f);
+                    count++;
                     continue;
                 }
                     
                 Gizmos.color = Color.green;
                 Gizmos.DrawCube(block.transform.position - Vector3.forward * 2f, Vector3.one * 0.3f);
+                count++;
             }
         }
     }

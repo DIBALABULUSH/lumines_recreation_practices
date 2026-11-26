@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Lumines
 {
@@ -149,12 +150,15 @@ namespace Lumines
                 return Array.Empty<T>();
             
             // double-check the index range
+            // the inputs will out if bounds,
+            // so we need to return empty array if it is
             if ((uint)startX >= (uint)_width ||
                 (uint)startY >= (uint)_height || 
                 wid > _width - startX ||
                 hgt > _height - startY)
             {
-                throw new IndexOutOfRangeException();
+                // throw new IndexOutOfRangeException();
+                return Array.Empty<T>();
             }
             
             // set the result array
@@ -163,14 +167,16 @@ namespace Lumines
             
             var endIndexY = startY + hgt - 1;
 
+            var count = 0;
             for (int y = startY; y <= endIndexY; y++)
             {
                 Array.Copy(
                     _array,
                     y * _width + startX,
                     result,
-                    y * wid,
+                    count * wid,
                     wid);
+                count++;
             }
             
             return result;
