@@ -135,8 +135,8 @@ namespace Lumines
         /// basic init
         /// </summary>
         /// <param name="boardField"></param>
-        /// <param name="pieceValue"></param>
-        public void Init(BoardField boardField, byte pieceValue)
+        /// <param name="byteArray"></param>
+        public void Init(BoardField boardField, byte[] byteArray)
         {
             _spawnTime = Time.time;
             _boardField = boardField;
@@ -144,10 +144,13 @@ namespace Lumines
             _rotateCount = 0;
 
             _gridPieceCenterPos = new Vector2Int(8, 11);
-            
+
+            var count = 0;
             foreach (var pieceBlock in _pieceBlockList)
             {
                 pieceBlock.SetBoardField(_boardField);
+                var byteValue = byteArray[count++];
+                pieceBlock.UpdateBlock(byteValue);
             }
             
             visual.Init();

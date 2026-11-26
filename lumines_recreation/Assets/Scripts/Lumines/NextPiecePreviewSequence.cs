@@ -47,10 +47,10 @@ namespace Lumines
         /// </summary>
         public Piece SpawnPiece()
         {
-            var byteValue = RandomByteLast4Bits(0);
+            var byteArray = GetRandomByteArray(4);
             
             var newPiece = Instantiate(piecePrefab, pieceRoot);
-            newPiece.Init(boardField, byteValue);
+            newPiece.Init(boardField, byteArray);
             newPiece.enabled = false;
             
             return newPiece;
@@ -96,7 +96,19 @@ namespace Lumines
                 order++;
             }
         }
+        
+        private byte[] GetRandomByteArray(int quantity)
+        {
+            var byteArray = new byte[quantity];
 
+            for (int i = 0; i < byteArray.Length; i++)
+            {
+                var randomBits =  new Random().Next(0, byte.MaxValue);
+                byteArray[i] = (byte)randomBits;
+            }
+            return byteArray;
+        }
+        
         /// <summary>
         /// 
         /// </summary>

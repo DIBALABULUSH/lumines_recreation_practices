@@ -17,6 +17,9 @@ namespace Lumines
         [SerializeField, ReadOnly] private Vector2Int _gridPosition;
         [SerializeField, ReadOnly] private Vector2Int _localGridPosition;
         
+        [Header("Settings")]
+        [SerializeField] private byte blockType;
+        
         private BoardField _boardField;
 
         // 0 is type A, 1 is type B,
@@ -142,6 +145,12 @@ namespace Lumines
         {
             _isReadyToClear = true;
             visual.ReadyToClear();
+        }
+
+        public void UpdateBlock(byte byteValue)
+        {
+            _blockType = (byte)(byteValue % 2);
+            
         }
     }
 }

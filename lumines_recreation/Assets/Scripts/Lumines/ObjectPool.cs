@@ -21,6 +21,10 @@ namespace Lumines
         {
             return _objQueue.Count > 0 ? _objQueue.Dequeue() : default;
         }
-        
+
+        public void Clear()
+        {
+            _objQueue?.Clear();
+        }
     }
 }

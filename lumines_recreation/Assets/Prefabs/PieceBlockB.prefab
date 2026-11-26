@@ -156,6 +156,7 @@ MonoBehaviour:
   freeFallTimePerTile: 0.06
   _gridPosition: {x: 0, y: 0}
   _localGridPosition: {x: 0, y: 0}
+  blockType: 1
 --- !u!114 &5602583116325828087
 MonoBehaviour:
   m_ObjectHideFlags: 0
