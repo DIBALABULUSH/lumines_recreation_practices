@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Tools;
 using UnityEngine;
@@ -11,13 +12,15 @@ namespace Lumines
     public class BoardField : MonoBehaviour
     {
         [Header("Prefabs")]
-        [SerializeField] private MergedPieceBlock mergedPieceBlockPrefab;
+        [SerializeField] private MergedPieceBlock mergedPieceBlockPrefabA;
+        [SerializeField] private MergedPieceBlock mergedPieceBlockPrefabB;
         
         [Header("Components")]
         [SerializeField] private Transform pieceSpawnRoot;
         [SerializeField] private Transform pieceContainer;
         
         private ArrayGrid<PieceBlock> _pieceBlockArrayGrid;
+        private List<MergedPieceBlock> _mergedPieceBlockList;
         
         private Vector2Int _boardSize = new Vector2Int(16, 10);
         public Vector2Int BoardSize => _boardSize;
@@ -37,6 +40,7 @@ namespace Lumines
         public void Init()
         {
             _pieceBlockArrayGrid ??= new ArrayGrid<PieceBlock>(_boardSize.x, _boardSize.y);
+            _mergedPieceBlockList ??= new List<MergedPieceBlock>();
         }
 
         public void ClearBoard()
@@ -50,6 +54,12 @@ namespace Lumines
                 Destroy(pieceBlock.gameObject);
             }
             _pieceBlockArrayGrid.Clear();
+
+            foreach (var pieceBlock in _mergedPieceBlockList)
+            {
+                Destroy(pieceBlock.gameObject);
+            }
+            _mergedPieceBlockList.Clear();
         }
         
         public bool PlaceBlockOnField(PieceBlock block, Vector2Int gridPos)
@@ -193,9 +203,12 @@ namespace Lumines
                 }
                 
                 // spawn merged block
-                var mergedPieceBlock = Instantiate(mergedPieceBlockPrefab, pieceContainer);
+                var prefab = blockType == 0 ? mergedPieceBlockPrefabA : mergedPieceBlockPrefabB;
+                var mergedPieceBlock = Instantiate(prefab, pieceContainer);
                 var centerPos = blockPos.ToVec2() - Vector2.one * mergedSize * 0.5f;
                 mergedPieceBlock.Init(mergedSize, centerPos);
+                
+                _mergedPieceBlockList.Add(mergedPieceBlock);
             }
         }
         

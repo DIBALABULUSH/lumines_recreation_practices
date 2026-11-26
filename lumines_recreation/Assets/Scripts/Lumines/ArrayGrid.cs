@@ -5,7 +5,8 @@ using System.Collections.Generic;
 namespace Lumines
 {
     /// <summary>
-    /// one dimension array but use as two dimension grid
+    /// one dimension array but use as two dimension grid.
+    /// grid order is row dense 
     /// </summary>
     public class ArrayGrid<T> : IEnumerable<T>
     {
@@ -20,6 +21,11 @@ namespace Lumines
 
         public ArrayGrid(int width, int height)
         {
+            if (width <= 0 || height <= 0)
+            {
+                throw new ArgumentException("width and height must be positive");
+            }
+            
             _width = width;
             _height = height;
             
@@ -161,7 +167,7 @@ namespace Lumines
             {
                 Array.Copy(
                     _array,
-                    (startY + y) * _width + startX,
+                    y * _width + startX,
                     result,
                     y * wid,
                     wid);
